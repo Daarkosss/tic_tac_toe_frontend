@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
-import Board from './Board';
+import Board from '../components/Board';
+import { useLocation, Link } from 'react-router-dom';
 import { SquareValue } from '../types';
 import '../styles/Game.scss';
 
-const Game: React.FC = () => {
-  const [history, setHistory] = useState<SquareValue[][]>([Array(9).fill(null)]);
-  const [stepNumber, setStepNumber] = useState<number>(0);
-  const [xIsNext, setXIsNext] = useState<boolean>(true);
+interface LocationState {
+    username: string;
+  }
 
+const Game: React.FC = () => {
+    const location = useLocation();
+    const state = location.state as LocationState; // Typowanie stanu przekazanego z Home
+  
+    const [history, setHistory] = useState<SquareValue[][]>([Array(9).fill(null)]);
+    const [stepNumber, setStepNumber] = useState<number>(0);
+    const [xIsNext, setXIsNext] = useState<boolean>(true);
   const handleClick = (i: number) => {
     const historyPoint = history.slice(0, stepNumber + 1);
     const current = historyPoint[stepNumber];
@@ -26,15 +33,6 @@ const Game: React.FC = () => {
   const current = history[stepNumber];
   const winner = calculateWinner(current);
 
-  const moves = history.map((_step, move) => {
-    const desc = move ? `Move #${move}` : 'Game start';
-    return (
-      <li key={move}>
-        <div>{desc}</div>
-      </li>
-    );
-  });
-
   let status: string;
   if (winner) {
     status = `Winner: ${winner}`;
@@ -43,13 +41,18 @@ const Game: React.FC = () => {
   }
 
   return (
-    <div className="game">
-      <div className="game-board">
-        <Board squares={current} onClick={handleClick} />
+    <div className="game-container">
+      <div className="game-header">
+        <Link to="/" className="back-link">Powrót do strony głównej</Link>
+        <div className="username">Gracz: {state?.username || 'Anonim'}</div>
       </div>
-      <div className="game-info">
-        <div>{status}</div>
-        <ol>{moves}</ol>
+      <div className="game">
+        <div className="game-board">
+          <Board squares={current} onClick={handleClick} />
+        </div>
+        <div className="game-info">
+          <div>{status}</div>
+        </div>
       </div>
     </div>
   );
