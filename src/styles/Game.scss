@@ -24,8 +24,17 @@
   
   
   .square {
-    width: 60px; /* Zwiększ szerokość */
-    height: 60px; /* Zwiększ wysokość */
-    font-size: 24px; /* Zwiększ rozmiar fontu dla X i O */
+    width: 100px; /* lub inna wartość, która pasuje do twojego layoutu */
+    height: 100px;
+    margin: 0;
+    padding: 0;
+    font-size: 24px; /* dostosuj do potrzeb */
+    line-height: 60px; /* powinno odpowiadać wysokości, aby tekst był na środku */
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #e2e2e2; /* lub inny styl ramki */
+    background: #3d3d3d;
+    cursor: pointer;
   }
+  
   
