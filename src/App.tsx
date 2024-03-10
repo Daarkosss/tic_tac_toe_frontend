@@ -1,37 +1,29 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './styles/App.scss'
-import WebSocketComponent from './WebSocketComponent'
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import './styles/App.scss';
+import Game from './components/Game';
+import WebSocketComponent from './WebSocketComponent';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function Home() {
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
+      <div>Strona Główna</div>
       <WebSocketComponent />
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Link to="/game">Rozpocznij grę</Link>
     </>
-  )
+  );
 }
 
-export default App
+function App() {
+  return (
+    <Router>
+      <>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/game" element={<Game />} />
+        </Routes>
+      </>
+    </Router>
+  );
+}
+
+export default App;

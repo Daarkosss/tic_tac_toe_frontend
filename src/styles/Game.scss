@@ -1,0 +1,31 @@
+.game {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: start; /* Zapobiega rozciąganiu się elementów */
+  }
+  
+  .game-board {
+    margin: auto; /* Centrowanie */
+    max-width: 600px; /* Stała szerokość */
+    max-height: 600px; /* Stała wysokość */
+    display: flex; /* Umożliwia elastyczne rozmieszczanie komponentów wewnątrz */
+    justify-content: center; /* Centrowanie w poziomie */
+    align-items: center; /* Centrowanie w pionie */
+  }
+  
+  
+  .game-info {
+    max-height: 30vh; /* Zmniejsz maksymalną wysokość */
+    overflow-y: auto; /* Pozwól na przewijanie */
+    font-size: 12px; /* Zmniejsz rozmiar fontu */
+    opacity: 0.5; /* Zmniejsz widoczność */
+  }
+  
+  
+  .square {
+    width: 60px; /* Zwiększ szerokość */
+    height: 60px; /* Zwiększ wysokość */
+    font-size: 24px; /* Zwiększ rozmiar fontu dla X i O */
+  }
+  
