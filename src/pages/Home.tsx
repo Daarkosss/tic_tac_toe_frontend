@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import WebSocketComponent from '../WebSocketComponent';
 import '../styles/Home.scss';
 import { store } from '../store/Store';
 
@@ -11,13 +10,12 @@ const Home: React.FC = () => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         store.startGame(username);
-        navigate('/game', { state: { username } });
+        navigate('/game');
     };
 
     return (
         <div className="Home">
             <h1>Strona Główna</h1>
-            <WebSocketComponent />
             <form className="form" onSubmit={handleSubmit}>
                 <label htmlFor="username">Nazwa użytkownika:</label>
                 <input

@@ -1,5 +1,5 @@
 import { Room } from './types';
-
+import { WebSocketService } from './WebSocketService';
 
 const PATH_PREFIX = 'http://localhost:8080/';
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
@@ -30,6 +30,7 @@ class API {
       return data;
     }
   }
+  webSocket = new WebSocketService();
 
   async authorizedFetch<T>(
     method: Method,

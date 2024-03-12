@@ -10,7 +10,6 @@ import '../styles/Game.scss';
 const Game = observer(() => {  
     const [history, setHistory] = useState<SquareValue[][]>([Array(9).fill(null)]);
     const [stepNumber, setStepNumber] = useState<number>(0);
-    const [xIsNext, setXIsNext] = useState<boolean>(true);
 
     const handleClick = (i: number) => {
         const historyPoint = history.slice(0, stepNumber + 1);
@@ -20,21 +19,20 @@ const Game = observer(() => {
         if (calculateWinner(squares) || squares[i])
             return;
 
-        squares[i] = xIsNext ? 'X' : 'O';
+        squares[i] = 'O';
         setHistory([...historyPoint, squares]);
         setStepNumber(historyPoint.length);
-        setXIsNext(!xIsNext);
     };
 
     const current = history[stepNumber];
-    const winner = calculateWinner(current);
+    // const winner = calculateWinner(current);
 
-    let status: string;
-    if (winner) {
-        status = `Winner: ${winner}`;
-    } else {
-        status = `Next player: ${xIsNext ? 'X' : 'O'}`;
-    }
+    // let status: string;
+    // if (winner) {
+    //     status = `Winner: ${winner}`;
+    // } else {
+    //     status = `Next player: ${xIsNext ? 'X' : 'O'}`;
+    // }
 
     const deletePlayerFromRoom = () => {
         if (store.room)
@@ -59,7 +57,7 @@ const Game = observer(() => {
             <div className="game-info">
                 <div>{store.room?.roomName}</div>
                 <div>{store.room?.player1} vs {store.room?.player2}</div>
-                <div>{status}</div>
+                {/* <div>{status}</div> */}
             </div>
             </div>
         )}
