@@ -1,61 +1,70 @@
 .game {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .game-board {
-  margin: auto; /* Centrowanie */
-  max-width: 600px; /* Stała szerokość */
-  max-height: 600px; /* Stała wysokość */
-  display: flex; /* Umożliwia elastyczne rozmieszczanie komponentów wewnątrz */
-  justify-content: center; /* Centrowanie w poziomie */
-  align-items: center; /* Centrowanie w pionie */
+    margin: auto; /* Centrowanie */
+    max-width: 600px; /* Stała szerokość */
+    max-height: 600px; /* Stała wysokość */
+    display: flex; /* Umożliwia elastyczne rozmieszczanie komponentów wewnątrz */
+    justify-content: center; /* Centrowanie w poziomie */
+    align-items: center; /* Centrowanie w pionie */
 }
   
 .square {
-  width: 100px; /* lub inna wartość, która pasuje do twojego layoutu */
-  height: 100px;
-  margin: 0;
-  padding: 0;
-  font-size: 24px; /* dostosuj do potrzeb */
-  line-height: 60px; /* powinno odpowiadać wysokości, aby tekst był na środku */
-  text-align: center;
-  vertical-align: middle;
-  border: 1px solid #e2e2e2; /* lub inny styl ramki */
-  background: #3d3d3d;
-  cursor: pointer;
+    width: 100px; /* lub inna wartość, która pasuje do twojego layoutu */
+    height: 100px;
+    margin: 0;
+    padding: 0;
+    font-size: 24px; /* dostosuj do potrzeb */
+    line-height: 60px; /* powinno odpowiadać wysokości, aby tekst był na środku */
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #e2e2e2; /* lub inny styl ramki */
+    background: #3d3d3d;
+    cursor: pointer;
 }
 
 .back-link {
-  padding: 5px 10px;
-  text-decoration: none;
-  color: #ffffff; /* Przykładowy kolor, dostosuj do swoich potrzeb */
-  background-color: #002a77; /* Jasny tło, dostosuj do swoich potrzeb */
-  border: 1px solid #7c7c7c; /* Przykładowa ramka, dostosuj do swoich potrzeb */
-  border-radius: 5px; /* Zaokrąglone rogi */
+    padding: 5px 10px;
+    text-decoration: none;
+    color: #ffffff; /* Przykładowy kolor, dostosuj do swoich potrzeb */
+    background-color: #002a77; /* Jasny tło, dostosuj do swoich potrzeb */
+    border: 1px solid #7c7c7c; /* Przykładowa ramka, dostosuj do swoich potrzeb */
+    border-radius: 5px; /* Zaokrąglone rogi */
 }
 
 .username {
-  padding: 5px 10px;
-  background-color: #cc8500; /* Jasny tło, dostosuj do swoich potrzeb */
-  border: 1px solid #747474; /* Przykładowa ramka, dostosuj do swoich potrzeb */
-  border-radius: 5px; /* Zaokrąglone rogi */
+    padding: 5px 10px;
+    background-color: #cc8500; /* Jasny tło, dostosuj do swoich potrzeb */
+    border: 1px solid #747474; /* Przykładowa ramka, dostosuj do swoich potrzeb */
+    border-radius: 5px; /* Zaokrąglone rogi */
 }
 
 .game-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch; /* Zmiana z 'center' na 'stretch' */
-  height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch; /* Zmiana z 'center' na 'stretch' */
+    height: 90vh;
 }
 
 .game-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 20px; /* Możesz dostosować w zależności od potrzeb */
+    display: flex;
+    justify-content: space-between;
+    padding: 20px; /* Możesz dostosować w zależności od potrzeb */
+}
+
+.waiting-screen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-size: 24px;
+    color: #ffffff;
 }
