@@ -43,7 +43,7 @@ const Game = observer(() => {
         <div className="game-container">
         <div className="game-header">
             <Link to="/" className="back-link" onClick={deletePlayerFromRoom}>Powrót do strony głównej</Link>
-            <div className="username">Gracz: {store.username || 'Anonim'}</div>
+            <div className="username">Grasz jako: {store.username || 'Anonim'}</div>
         </div>
         {!store.gameStarted ? (
             <div className="waiting-screen">

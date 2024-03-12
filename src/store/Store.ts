@@ -37,13 +37,19 @@ class Store {
 
     deletePlayerFromRoom(roomName: string, username: string) {
         try {
-            this.gameStarted = false;
             api.deletePlayerFromRoom(roomName, username);
-            this.room = null;
+            this.resetStore()
             return true;
         } catch (error) {
             return error;
         }
+    }
+
+    resetStore() {
+        this.username = '';
+        this.gameStarted = false;
+        this.room = null;
+        this.isYourTurn = false;
     }
 }
 
