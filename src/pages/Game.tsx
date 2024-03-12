@@ -1,21 +1,16 @@
 import { useState } from 'react';
 import Board from '../components/Board';
-import { useLocation, Link } from 'react-router-dom';
+import { observer } from 'mobx-react-lite';
+import { Link } from 'react-router-dom';
 import { SquareValue } from '../types';
+import { store } from '../store/Store';
 import '../styles/Game.scss';
 
-interface LocationState {
-    username: string;
-  }
 
-const Game = () => {
-    const location = useLocation();
-    const state = location.state as LocationState; // Typowanie stanu przekazanego z Home
-  
+const Game = observer(() => {  
     const [history, setHistory] = useState<SquareValue[][]>([Array(9).fill(null)]);
     const [stepNumber, setStepNumber] = useState<number>(0);
     const [xIsNext, setXIsNext] = useState<boolean>(true);
-    const [isWaitingForOpponent, setIsWaitingForOpponent] = useState<boolean>(true);
 
     const handleClick = (i: number) => {
         const historyPoint = history.slice(0, stepNumber + 1);
@@ -41,13 +36,18 @@ const Game = () => {
         status = `Next player: ${xIsNext ? 'X' : 'O'}`;
     }
 
-  return (
+    const deletePlayerFromRoom = () => {
+        if (store.room)
+            store.deletePlayerFromRoom(store.room.roomName, store.username);
+    };
+
+    return (
         <div className="game-container">
         <div className="game-header">
-            <Link to="/" className="back-link">Powrót do strony głównej</Link>
-            <div className="username">Gracz: {state?.username || 'Anonim'}</div>
+            <Link to="/" className="back-link" onClick={deletePlayerFromRoom}>Powrót do strony głównej</Link>
+            <div className="username">Gracz: {store.username || 'Anonim'}</div>
         </div>
-        {isWaitingForOpponent ? (
+        {!store.gameStarted ? (
             <div className="waiting-screen">
             Oczekiwanie na dołączenie drugiego gracza...
             </div>
@@ -57,13 +57,15 @@ const Game = () => {
                 <Board squares={current} onClick={handleClick} />
             </div>
             <div className="game-info">
+                <div>{store.room?.roomName}</div>
+                <div>{store.room?.player1} vs {store.room?.player2}</div>
                 <div>{status}</div>
             </div>
             </div>
         )}
         </div>
     );
-};
+});
 
 function calculateWinner(squares: SquareValue[]): SquareValue {
     const lines = [

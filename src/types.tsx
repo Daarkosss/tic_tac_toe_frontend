@@ -9,3 +9,10 @@ export interface BoardProps {
     squares: SquareValue[];
     onClick: (i: number) => void;
 }
+
+export type Room = {
+    roomName: string,
+    freeSlots: number,
+    player1: string,
+    player2: string,
+}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebSocketComponent from '../WebSocketComponent';
 import '../styles/Home.scss';
+import { store } from '../store/Store';
 
 const Home: React.FC = () => {
     const [username, setUsername] = useState<string>('');
@@ -9,6 +10,7 @@ const Home: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+        store.startGame(username);
         navigate('/game', { state: { username } });
     };
 
@@ -19,12 +21,12 @@ const Home: React.FC = () => {
             <form className="form" onSubmit={handleSubmit}>
                 <label htmlFor="username">Nazwa użytkownika:</label>
                 <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-                minLength={5}
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
+                    minLength={5}
                 />
                 <button type="submit">Rozpocznij grę</button>
             </form>
