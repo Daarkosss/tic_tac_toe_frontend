@@ -7,7 +7,7 @@ class Store {
     username = '';
     gameStarted = false;
     room: Room | null = null;
-    isYourTurn = false;
+    isYourTurn = true; // Just for testing
     yourSymbol: SquareValue | null = null;
     board: SquareValue[] = this.resetBoard()
 
