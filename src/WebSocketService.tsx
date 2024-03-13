@@ -1,11 +1,7 @@
 import SockJS from 'sockjs-client';
 import Stomp, { Client } from 'webstomp-client';
 import { store } from './store/Store';
-import { runInAction } from 'mobx';
 
-interface ReceivedMessage {
-    message: string;
-}
 
 export class WebSocketService {
     private stompClient: Client | null = null;
@@ -18,19 +14,22 @@ export class WebSocketService {
         console.log('Połączono z WebSocket.');
 
         this.stompClient?.subscribe(`/topic/${store.username}`, (message) => {
-            const receivedMessage: ReceivedMessage = JSON.parse(message.body);
-            if (receivedMessage.message === "Game starting") {
-                runInAction(() => {
-                    store.gameStarted = true;
-                })
-            } else {
-                const position = +receivedMessage.message;
-                if (!isNaN(position)) {
-                    console.log('Opponent move:', position);
-                    store.updateOpponentMove(position);
+            try {
+                const data = JSON.parse(message.body);
+                console.log(data, typeof data.isStarting, data.isStarting);
+
+                if (Array.isArray(data.fields)) {
+                    console.log("Otrzymano Boarda", data.fields);
+                    store.restoreBoard(data.fields);
+                } else if (typeof data.isStarting === 'boolean') {
+                    console.log("Otrzymano Boolean", data);
+                    store.startGame(data.isStarting);
+                } else {
+                    console.log("Nieznany format danych", data);
                 }
+            } catch (error) {
+                console.error("Błąd przetwarzania wiadomości:", error);
             }
-            console.log(receivedMessage);
         });
 
         // Możliwość wysyłania wiadomości do serwera
@@ -38,10 +37,15 @@ export class WebSocketService {
         });
     }
 
-    public sendMove(position: number): void {
+    public sendMove(i: number, j: number): void {
         if (this.stompClient && this.stompClient.connected) {
-            const move = { position};
-            this.stompClient.send(`/topic/${store.username}`, JSON.stringify(move));
+            const move = { 
+                roomName: store.room?.roomName,
+                x: i,
+                y: j,
+                playerName: store.username
+            };
+            this.stompClient.send(`/app/move`, JSON.stringify(move));
             console.log('Sent move:', move);
         } else {
             console.log("Stomp client is not connected.");

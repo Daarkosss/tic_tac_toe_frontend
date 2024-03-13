@@ -1,17 +1,27 @@
 import Board from '../components/Board';
 import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
-import { SquareValue } from '../types';
 import { store } from '../store/Store';
 import '../styles/Game.scss';
+import { useEffect } from 'react';
 
 
-const Game = observer(() => { 
-    const handleClick = (i: number) => {
-        if (!store.isYourTurn || store.board[i] || calculateWinner(store.board)) 
+const Game = observer(() => {
+
+    useEffect(() => {
+        // store.restoreRoom();
+        if (!store.room) {
+            store.chooseRoomForGame();
+            console.log('dupsko');
+        }
+    }, []);
+
+    const handleClick = (i: number, j: number) => {
+        if (!store.isYourTurn || store.board[i][j]) {
             return;
+        }
 
-        store.sendMove(i);
+        store.sendMove(i, j);
     };
 
     const deletePlayerFromRoom = () => {
@@ -25,7 +35,7 @@ const Game = observer(() => {
             <Link to="/" className="back-link" onClick={deletePlayerFromRoom}>Powrót do strony głównej</Link>
             <div className="username">Grasz jako: {store.username || 'Anonim'}</div>
         </div>
-        {!store.gameStarted ? (
+        {!store.gameInProgress ? (
             <div className="waiting-screen">
             Oczekiwanie na dołączenie drugiego gracza...
             </div>
@@ -44,24 +54,5 @@ const Game = observer(() => {
         </div>
     );
 });
-
-function calculateWinner(squares: SquareValue[]): SquareValue {
-    const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-    ];
-    for (const [a, b, c] of lines) {
-        if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-        return squares[a];
-        }
-    }
-    return null;
-}
 
 export default Game;

@@ -5,18 +5,57 @@ import { Room, SquareValue } from "../types";
 
 class Store {
     username = '';
-    gameStarted = false;
+    gameInProgress = false;
     room: Room | null = null;
-    isYourTurn = true; // Just for testing
-    yourSymbol: SquareValue | null = null;
-    board: SquareValue[] = this.resetBoard()
+    isYourTurn = false;
+    board: SquareValue[][] = this.resetBoard()
 
     constructor() {
         makeAutoObservable(this);
     }
 
+    saveRoomDataToLocalStorage() {
+        const dataToStore = {
+            username: this.username,
+            room: this.room
+        }
+        localStorage.setItem('roomData', JSON.stringify(dataToStore));
+    }
+
+    getRoomDataFromLocalStorage() {
+        const roomData = localStorage.getItem('roomData');
+        if (roomData) {
+            return JSON.parse(roomData);
+        } else {
+            return null
+        }
+    }
+
+    async restoreRoom() {
+        const userRoom = this.getRoomDataFromLocalStorage();
+        if (userRoom) {
+            this.username = userRoom.username;
+            const board = await api.getRoom(userRoom.roomName);
+            this.updateEntireBoard(board);
+        }
+    }
+
     resetBoard() {
-        return Array(9).fill(null);
+        const board = Array(3).fill(null);
+        for (let i = 0; i < 3; i++) {
+            board[i] = Array(3).fill(null);
+        }
+        return board
+    }
+
+    get yourSymbol() {
+        if (this.username === this.room?.player1) {
+            return 'X';
+        } else if (this.username === this.room?.player2) {
+            return 'O';
+        } else {
+            return null;
+        }
     }
 
     get opponentSymbol() {
@@ -26,38 +65,47 @@ class Store {
         return this.yourSymbol === 'X' ? 'O' : 'X';
     }
 
+    restoreBoard(board: number[][]) {
+        this.updateEntireBoard(board);
+        this.startGame(true);
+    }
+
     startWebSocketConnection() {
         api.webSocket.startConnection();
     }
 
-    sendMove(position: number) {
-        this.yourSymbol = 'X'; // Just for testing
-        // this.isYourTurn = false; Commented for testing
-        this.board[position] = this.yourSymbol;
-        api.webSocket.sendMove(position);
+    sendMove(i: number, j: number) {
+        this.isYourTurn = false;
+        this.board[i][j] = this.yourSymbol;
+        api.webSocket.sendMove(i, j);
     }
 
-    updateBoardState(position: number, value: SquareValue) {
-        this.board[position] = value;
+    updateBoardSquare(i: number, j: number, value: SquareValue) {
+        this.board[i][j] = value;
     }
 
-    updateOpponentMove(position: number) {
-        this.board[position] = this.opponentSymbol;
-        this.isYourTurn = true;
+    updateEntireBoard(board: number[][]) {
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                this.board[i][j] = board[i][j] === 1 ? "X" : board[i][j] === 2 ? "O" : null;
+            }
+        }
     }
 
-    async startGame(username: string) {
-        this.username = username;
+    startGame(isStarting: boolean) {
+        this.isYourTurn = isStarting;
+        this.gameInProgress = true;
+    }
+
+    async chooseRoomForGame() {
         this.startWebSocketConnection();
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         try {
             const response = await api.chooseRoomForPlayer(this.username);
             runInAction(() => {
                 this.room = response;
-                // Do usuniecia - potrzeba bedzie dostac webSocketem kto zaczyna gre
-                if (this.room.player2 !== null) {
-                    this.gameStarted = true;
-                }
+                this.saveRoomDataToLocalStorage();
             });
             return true;
         } catch (error) {
@@ -77,7 +125,7 @@ class Store {
 
     resetStore() {
         this.username = '';
-        this.gameStarted = false;
+        this.gameInProgress = false;
         this.room = null;
         this.isYourTurn = false;
         this.board = this.resetBoard();

@@ -5,25 +5,25 @@ import '../styles/Game.scss';
 
 
 const Board: React.FC<BoardProps> = ({ onClick }) => {
-    const renderSquare = (i: number) => (
-        <Square position={i} onClick={() => onClick(i)} />
+    const renderSquare = (i: number, j: number) => (
+        <Square i={i} j = {j} onClick={() => onClick(i, j)} />
     );
 
     return <div>
         <div className="board-row">
-            {renderSquare(0)}
-            {renderSquare(1)}
-            {renderSquare(2)}
+            {renderSquare(0, 0)}
+            {renderSquare(0, 1)}
+            {renderSquare(0, 2)}
         </div>
         <div className="board-row">
-            {renderSquare(3)}
-            {renderSquare(4)}
-            {renderSquare(5)}
+            {renderSquare(1, 0)}
+            {renderSquare(1, 1)}
+            {renderSquare(1, 2)}
         </div>
         <div className="board-row">
-            {renderSquare(6)}
-            {renderSquare(7)}
-            {renderSquare(8)}
+            {renderSquare(2, 0)}
+            {renderSquare(2, 1)}
+            {renderSquare(2, 2)}
         </div>
     </div>
 };

@@ -9,7 +9,7 @@ const Home: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        store.startGame(username);
+        store.username = username;
         navigate('/game');
     };
 

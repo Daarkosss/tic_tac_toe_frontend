@@ -61,6 +61,15 @@ class API {
         console.log(response);
         return response;
     }
+
+    async getRoom(roomName: string): Promise<number[][]> {
+        const response = await this.fetch<number[][]>(
+            'POST', 
+            `rooms/getRoom?roomName=${roomName}`, 
+        );
+        console.log('getRoom', response);
+        return response;
+    }
 }
 
 export const api = new API();

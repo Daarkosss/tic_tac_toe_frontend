@@ -5,9 +5,9 @@ import '../styles/Game.scss';
 import { store } from '../store/Store';
 
 
-const Square: React.FC<SquareProps> = observer(({ position, onClick }) => (
-    <button disabled={store.board[position] !== null} className="square" onClick={onClick}>
-        {store.board[position]}
+const Square: React.FC<SquareProps> = observer(({ i, j, onClick }) => (
+    <button disabled={store.board[i][j] !== null} className="square" onClick={onClick}>
+        {store.board[i][j]}
     </button>
 ));
 
