@@ -1,19 +1,49 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { api } from "../api";
-import { Room } from "../types";
+import { Room, SquareValue } from "../types";
+
 
 class Store {
     username = '';
     gameStarted = false;
     room: Room | null = null;
     isYourTurn = false;
+    yourSymbol: SquareValue | null = null;
+    board: SquareValue[] = this.resetBoard()
 
     constructor() {
         makeAutoObservable(this);
     }
 
+    resetBoard() {
+        return Array(9).fill(null);
+    }
+
+    get opponentSymbol() {
+        if (this.yourSymbol === null) {
+            return null;
+        }
+        return this.yourSymbol === 'X' ? 'O' : 'X';
+    }
+
     startWebSocketConnection() {
         api.webSocket.startConnection();
+    }
+
+    sendMove(position: number) {
+        this.yourSymbol = 'X'; // Just for testing
+        // this.isYourTurn = false; Commented for testing
+        this.board[position] = this.yourSymbol;
+        api.webSocket.sendMove(position);
+    }
+
+    updateBoardState(position: number, value: SquareValue) {
+        this.board[position] = value;
+    }
+
+    updateOpponentMove(position: number) {
+        this.board[position] = this.opponentSymbol;
+        this.isYourTurn = true;
     }
 
     async startGame(username: string) {
@@ -24,7 +54,7 @@ class Store {
             const response = await api.chooseRoomForPlayer(this.username);
             runInAction(() => {
                 this.room = response;
-                console.log('player2 is not null');
+                // Do usuniecia - potrzeba bedzie dostac webSocketem kto zaczyna gre
                 if (this.room.player2 !== null) {
                     this.gameStarted = true;
                 }
@@ -50,6 +80,8 @@ class Store {
         this.gameStarted = false;
         this.room = null;
         this.isYourTurn = false;
+        this.board = this.resetBoard();
+        api.webSocket.disconnect();
     }
 }
 

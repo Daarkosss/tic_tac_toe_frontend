@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import Board from '../components/Board';
 import { observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
@@ -7,32 +6,18 @@ import { store } from '../store/Store';
 import '../styles/Game.scss';
 
 
-const Game = observer(() => {  
-    const [history, setHistory] = useState<SquareValue[][]>([Array(9).fill(null)]);
-    const [stepNumber, setStepNumber] = useState<number>(0);
-
+const Game = observer(() => { 
     const handleClick = (i: number) => {
-        const historyPoint = history.slice(0, stepNumber + 1);
-        const current = historyPoint[stepNumber];
-        const squares = [...current];
-
-        if (calculateWinner(squares) || squares[i])
+        if (!store.isYourTurn || store.board[i] || calculateWinner(store.board)) 
             return;
 
-        squares[i] = 'O';
-        setHistory([...historyPoint, squares]);
-        setStepNumber(historyPoint.length);
+        store.sendMove(i);
     };
 
-    const current = history[stepNumber];
-    // const winner = calculateWinner(current);
-
-    // let status: string;
-    // if (winner) {
-    //     status = `Winner: ${winner}`;
-    // } else {
-    //     status = `Next player: ${xIsNext ? 'X' : 'O'}`;
-    // }
+    const current = Array(9).fill(null);
+    store.moves.forEach(move => {
+        current[move.position] = move.value;
+    });
 
     const deletePlayerFromRoom = () => {
         if (store.room)
@@ -52,7 +37,7 @@ const Game = observer(() => {
         ) : (
             <div className="game">
             <div className="game-board">
-                <Board squares={current} onClick={handleClick} />
+                <Board onClick={handleClick} />
             </div>
             <div className="game-info">
                 <div>{store.room?.roomName}</div>

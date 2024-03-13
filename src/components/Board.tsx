@@ -4,9 +4,9 @@ import Square from './Square';
 import '../styles/Game.scss';
 
 
-const Board: React.FC<BoardProps> = ({ squares, onClick }) => {
+const Board: React.FC<BoardProps> = ({ onClick }) => {
     const renderSquare = (i: number) => (
-        <Square value={squares[i]} onClick={() => onClick(i)} />
+        <Square position={i} onClick={() => onClick(i)} />
     );
 
     return <div>
