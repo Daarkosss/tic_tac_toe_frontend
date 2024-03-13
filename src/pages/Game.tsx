@@ -14,11 +14,6 @@ const Game = observer(() => {
         store.sendMove(i);
     };
 
-    const current = Array(9).fill(null);
-    store.moves.forEach(move => {
-        current[move.position] = move.value;
-    });
-
     const deletePlayerFromRoom = () => {
         if (store.room)
             store.deletePlayerFromRoom(store.room.roomName, store.username);
