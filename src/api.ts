@@ -1,4 +1,4 @@
-import { Room } from './types';
+import { GetRoomResponse, Room } from './types';
 import { WebSocketService } from './WebSocketService';
 
 const PATH_PREFIX = 'http://localhost:8080/';
@@ -62,10 +62,10 @@ class API {
         return response;
     }
 
-    async getRoom(roomName: string): Promise<number[][]> {
-        const response = await this.fetch<number[][]>(
-            'POST', 
-            `rooms/getRoom?roomName=${roomName}`, 
+    async getRoom(roomName: string): Promise<GetRoomResponse> {
+        const response = await this.fetch<GetRoomResponse>(
+            'GET', 
+            `rooms?roomName=${roomName}`, 
         );
         console.log('getRoom', response);
         return response;

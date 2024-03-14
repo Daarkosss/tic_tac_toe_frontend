@@ -9,10 +9,7 @@ import { useEffect } from 'react';
 const Game = observer(() => {
 
     useEffect(() => {
-        store.restoreRoom();
-        if (!store.room) {
-            store.chooseRoomForGame();
-        }
+        store.chooseRoom();
     }, []);
 
     const handleClick = (i: number, j: number) => {
@@ -47,7 +44,7 @@ const Game = observer(() => {
                 </div>
                 <div className="game-info">
                     <div>{store.room?.roomName}</div>
-                    <div>{store.room?.player1} vs {store.room?.player2}</div>
+                    <div>{store.room?.player1.name} vs {store.room?.player2.name}</div>
                     {/* <div>{status}</div> */}
                 </div>
             </div>

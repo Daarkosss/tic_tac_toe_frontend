@@ -13,8 +13,8 @@ export interface BoardProps {
 export type Room = {
     roomName: string,
     freeSlots: number,
-    player1: string,
-    player2: string
+    player1: Player,
+    player2: Player
 }
 
 export type UserRoom = {
@@ -29,4 +29,18 @@ export type StartGameMessage = boolean
 export type RoomWithBoard = {
     room: Room,
     board: BoardOfNumbers
+}
+
+export type GetRoomResponse = {
+    dtype: string,
+    roomName: string,
+    freeSlots: number,
+    fields: BoardOfNumbers,
+    player1: Player,
+    player2: Player
+}
+
+export type Player = {
+    name: string,
+    starting: boolean
 }

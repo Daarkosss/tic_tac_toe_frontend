@@ -33,16 +33,45 @@ class Store {
         }
     }
 
-    restoreRoom() {
+    async chooseRoom() {
         const userRoom = this.getRoomDataFromLocalStorage();
-        if (userRoom) {
+        if (userRoom && !this.username) {
             this.username = userRoom.username;
-            api.getRoom(userRoom.roomName).then((board) => this.restoreBoard(board));
+            try {
+                const response = await api.getRoom(userRoom.room.roomName);
+                this.startWebSocketConnection();
+                this.restoreBoard(response.fields);
+                runInAction(() => {
+                    this.room = {
+                        roomName: response.roomName,
+                        freeSlots: response.freeSlots,
+                        player1: response.player1,
+                        player2: response.player2
+                    };
+                    this.updatePlayerTurnFromRoom();
+                    console.log('is your turn?', this.isYourTurn);
+                });
+                return;
+            } catch (error) {
+                console.error("Nie udało się przywrócić pokoju:", error);
+            }
         }
+        store.chooseRoomForGame();
     }
 
     updateRoom(room: Room) {
         this.room = room;
+        this.updatePlayerTurnFromRoom();
+    }
+
+    updatePlayerTurnFromRoom() {
+        if (this.username === this.room?.player1.name) {
+            this.isYourTurn = this.room.player1.starting;
+        } else if (this.username === this.room?.player2.name) {
+            this.isYourTurn = this.room.player2.starting;
+        } else {
+            this.isYourTurn = false;
+        }
     }
 
     setGameOver(winner: boolean, draw: boolean) {
@@ -60,9 +89,9 @@ class Store {
     }
 
     get yourSymbol() {
-        if (this.username === this.room?.player1) {
+        if (this.username === this.room?.player1.name) {
             return 'X';
-        } else if (this.username === this.room?.player2) {
+        } else if (this.username === this.room?.player2.name) {
             return 'O';
         } else {
             return null;
@@ -77,9 +106,9 @@ class Store {
     }
 
     restoreBoard(board: BoardOfNumbers) {
-        console.log('restoring');
+        console.log(board);
         this.updateEntireBoard(board);
-        this.startGame(true);
+        this.startGame();
     }
 
     startWebSocketConnection() {
@@ -104,16 +133,16 @@ class Store {
         }
     }
 
-    startGame(isStarting: boolean) {
-        this.isYourTurn = isStarting;
+    startGame() {
         this.gameInProgress = true;
+        this.isYourTurn = true;
     }
 
     async chooseRoomForGame() {
-        this.startWebSocketConnection();
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
         try {
+            await this.startWebSocketConnection();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+    
             const response = await api.chooseRoomForPlayer(this.username);
             runInAction(() => {
                 this.room = response;
@@ -121,6 +150,7 @@ class Store {
             });
             return true;
         } catch (error) {
+            console.error('Błąd:', error);
             return error;
         }
     }
