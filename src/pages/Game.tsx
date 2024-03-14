@@ -35,6 +35,7 @@ const Game = observer(() => {
             <Link to="/" className="back-link" onClick={deletePlayerFromRoom}>Powrót do strony głównej</Link>
             <div className="username">Grasz jako: {store.username || 'Anonim'}</div>
         </div>
+        {store.gameOver && <div className="game-over">{store.isWinner ? 'Wygrałes!' : 'Przegrales'}</div>}
         {!store.gameInProgress ? (
             <div className="waiting-screen">
             Oczekiwanie na dołączenie drugiego gracza...

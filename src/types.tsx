@@ -21,3 +21,12 @@ export type UserRoom = {
     username: string,
     room: Room
 }
+
+export type BoardOfNumbers = number[][]
+
+export type StartGameMessage = boolean
+
+export type RoomWithBoard = {
+    room: Room,
+    board: BoardOfNumbers
+}

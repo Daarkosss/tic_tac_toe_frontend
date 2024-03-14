@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { api } from "../api";
-import { Room, SquareValue } from "../types";
+import { BoardOfNumbers, Room, SquareValue } from "../types";
 
 
 class Store {
@@ -8,7 +8,9 @@ class Store {
     gameInProgress = false;
     room: Room | null = null;
     isYourTurn = false;
-    board: SquareValue[][] = this.resetBoard()
+    board: SquareValue[][] = this.resetBoard();
+    gameOver = false;
+    isWinner: boolean | null = null;
 
     constructor() {
         makeAutoObservable(this);
@@ -39,6 +41,16 @@ class Store {
         }
     }
 
+    updateRoom(room: Room) {
+        this.room = room;
+    }
+
+    setGameOver(winner: boolean, draw: boolean) {
+        this.gameOver = true;
+        this.gameInProgress = false;
+        this.isWinner = draw ? null : winner;
+    }
+
     resetBoard() {
         const board = Array(3).fill(null);
         for (let i = 0; i < 3; i++) {
@@ -64,7 +76,7 @@ class Store {
         return this.yourSymbol === 'X' ? 'O' : 'X';
     }
 
-    restoreBoard(board: number[][]) {
+    restoreBoard(board: BoardOfNumbers) {
         console.log('restoring');
         this.updateEntireBoard(board);
         this.startGame(true);
@@ -84,7 +96,7 @@ class Store {
         this.board[i][j] = value;
     }
 
-    updateEntireBoard(board: number[][]) {
+    updateEntireBoard(board: BoardOfNumbers) {
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
                 this.board[i][j] = board[i][j] === 1 ? "X" : board[i][j] === 2 ? "O" : null;

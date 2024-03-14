@@ -16,16 +16,29 @@ export class WebSocketService {
         this.stompClient?.subscribe(`/topic/${store.username}`, (message) => {
             try {
                 const data = JSON.parse(message.body);
-                console.log(data, typeof data.isStarting, data.isStarting);
-
-                if (Array.isArray(data.fields)) {
-                    console.log("Otrzymano Boarda", data.fields);
-                    store.restoreBoard(data.fields);
-                } else if (typeof data.isStarting === 'boolean') {
-                    console.log("Otrzymano Boolean", data);
-                    store.startGame(data.isStarting);
-                } else {
-                    console.log("Nieznany format danych", data);
+                console.log("Otrzymano wiadomość:", data);
+                const messageType = data.dtype;
+                
+                switch(messageType) {
+                    case "Board":
+                        console.log("Otrzymano Board", data.fields);
+                        store.restoreBoard(data.fields);
+                        break;
+                    case "StartGameMessage":
+                        console.log("Otrzymano StartGameMessage", data.isStarting);
+                        store.startGame(data.isStarting);
+                        break;
+                    case "Room":
+                        console.log("Otrzymano Room", data.fields, data.roomName, data.player1, data.player2);
+                        store.restoreBoard(data.fields);
+                        store.updateRoom({roomName: data.roomName, player1: data.player1, player2: data.player2, freeSlots: data.freeSlots});
+                        break;
+                    case "GameOverMessage":
+                        console.log("Otrzymano GameOverMessage", data.winner, data.draw);
+                        store.setGameOver(data.winner, data.draw);
+                        break;
+                    default:
+                        console.error("Nieznany typ wiadomości:", messageType);
                 }
             } catch (error) {
                 console.error("Błąd przetwarzania wiadomości:", error);
