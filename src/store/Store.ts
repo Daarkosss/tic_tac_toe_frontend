@@ -31,12 +31,11 @@ class Store {
         }
     }
 
-    async restoreRoom() {
+    restoreRoom() {
         const userRoom = this.getRoomDataFromLocalStorage();
         if (userRoom) {
             this.username = userRoom.username;
-            const board = await api.getRoom(userRoom.roomName);
-            this.updateEntireBoard(board);
+            api.getRoom(userRoom.roomName).then((board) => this.restoreBoard(board));
         }
     }
 
@@ -66,6 +65,7 @@ class Store {
     }
 
     restoreBoard(board: number[][]) {
+        console.log('restoring');
         this.updateEntireBoard(board);
         this.startGame(true);
     }
