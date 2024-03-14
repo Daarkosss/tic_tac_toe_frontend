@@ -26,7 +26,7 @@ const Home: React.FC = () => {
                     required
                     minLength={5}
                 />
-                <button type="submit">Rozpocznij grę</button>
+                <button className="btn btn-light">Rozpocznij grę</button>
             </form>
         </div>
     )}

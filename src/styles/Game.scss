@@ -5,6 +5,11 @@
     justify-content: center;
     align-items: center;
     width: 100%;
+
+    .game-over {
+        font-size: 24px;
+        color: #ffca2c;
+    }
 }
 
 .game-board {
@@ -28,22 +33,15 @@
     border: 1px solid #e2e2e2; /* lub inny styl ramki */
     background: #3d3d3d;
     cursor: pointer;
-}
 
-.back-link {
-    padding: 5px 10px;
-    text-decoration: none;
-    color: #ffffff; /* Przykładowy kolor, dostosuj do swoich potrzeb */
-    background-color: #002a77; /* Jasny tło, dostosuj do swoich potrzeb */
-    border: 1px solid #7c7c7c; /* Przykładowa ramka, dostosuj do swoich potrzeb */
-    border-radius: 5px; /* Zaokrąglone rogi */
+    &:hover {
+        border: 3px solid #ffca2c;
+    }
 }
 
 .username {
-    padding: 5px 10px;
-    background-color: #cc8500; /* Jasny tło, dostosuj do swoich potrzeb */
-    border: 1px solid #747474; /* Przykładowa ramka, dostosuj do swoich potrzeb */
-    border-radius: 5px; /* Zaokrąglone rogi */
+    font-size: 20px;
+    color: #ffca2c;
 }
 
 .game-container {
@@ -52,6 +50,11 @@
     justify-content: flex-start;
     align-items: stretch; /* Zmiana z 'center' na 'stretch' */
     height: 90vh;
+
+    .game-over {
+        font-size: 24px;
+        color: #ffca2c;
+    }
 }
 
 .game-header {

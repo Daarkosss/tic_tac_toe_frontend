@@ -1,12 +1,13 @@
 import Board from '../components/Board';
 import { observer } from 'mobx-react-lite';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { store } from '../store/Store';
 import '../styles/Game.scss';
 import { useEffect } from 'react';
 
 
 const Game = observer(() => {
+    const navigate = useNavigate();
 
     useEffect(() => {
         store.chooseRoom();
@@ -21,34 +22,36 @@ const Game = observer(() => {
     };
 
     const deletePlayerFromRoom = () => {
-        if (store.room)
+        if (store.room) {
             store.deletePlayerFromRoom(store.room.roomName, store.username);
+            navigate("/");
+        }
     };
 
     return (
         <div className="game-container">
-        <div className="game-header">
-            <Link to="/" className="back-link" onClick={deletePlayerFromRoom}>Powrót do strony głównej</Link>
-            <div className="username">Grasz jako: {store.username || 'Anonim'}</div>
-        </div>
-        {store.isGameOver && <div className="game-over">{store.isWinner ? 'Wygrałes!' : 'Przegrales'}</div>}
-        {!store.gameInProgress && !store.isGameOver ? (
-            <div className="waiting-screen">
-            Oczekiwanie na dołączenie drugiego gracza...
+            <div className="game-header">
+                <button className="btn btn-warning" onClick={deletePlayerFromRoom}>Powrót do strony głównej</button>
+                <div className="username">Grasz jako: {store.username || 'Anonim'}</div>
             </div>
-        ) : (
-            <div className="game">
-                {!store.isGameOver && <div>{store.isYourTurn ? 'Your turn' : 'Opponent turn'}</div>}
-                <div className="game-board">
-                    <Board onClick={handleClick} />
+            {store.isGameOver && <div className="game-over">{store.isWinner ? 'You won!' : store.isWinner === false ? 'You lost!' : 'Draw!'}</div>}
+            {!store.gameInProgress && !store.isGameOver ? (
+                <div className="waiting-screen">
+                Oczekiwanie na dołączenie drugiego gracza...
                 </div>
-                <div className="game-info">
-                    <div>{store.room?.roomName}</div>
-                    <div>{store.room?.player1.name} vs {store.room?.player2.name}</div>
-                    {/* <div>{status}</div> */}
+            ) : (
+                <div className="game">
+                    {!store.isGameOver && <div>{store.isYourTurn ? 'Your turn' : 'Opponent turn'}</div>}
+                    <div className="game-board">
+                        <Board onClick={handleClick} />
+                    </div>
+                    <div className="game-info">
+                        <div>{store.room?.roomName}</div>
+                        <div>{store.room?.player1.name} vs {store.room?.player2.name}</div>
+                        {/* <div>{status}</div> */}
+                    </div>
                 </div>
-            </div>
-        )}
+            )}
         </div>
     );
 });
