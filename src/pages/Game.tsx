@@ -9,15 +9,14 @@ import { useEffect } from 'react';
 const Game = observer(() => {
 
     useEffect(() => {
-        // store.restoreRoom();
+        store.restoreRoom();
         if (!store.room) {
             store.chooseRoomForGame();
-            console.log('dupsko');
         }
     }, []);
 
     const handleClick = (i: number, j: number) => {
-        if (!store.isYourTurn || store.board[i][j]) {
+        if (store.isGameOver || !store.isYourTurn || store.board[i][j]) {
             return;
         }
 
@@ -35,21 +34,22 @@ const Game = observer(() => {
             <Link to="/" className="back-link" onClick={deletePlayerFromRoom}>Powrót do strony głównej</Link>
             <div className="username">Grasz jako: {store.username || 'Anonim'}</div>
         </div>
-        {store.gameOver && <div className="game-over">{store.isWinner ? 'Wygrałes!' : 'Przegrales'}</div>}
-        {!store.gameInProgress ? (
+        {store.isGameOver && <div className="game-over">{store.isWinner ? 'Wygrałes!' : 'Przegrales'}</div>}
+        {!store.gameInProgress && !store.isGameOver ? (
             <div className="waiting-screen">
             Oczekiwanie na dołączenie drugiego gracza...
             </div>
         ) : (
             <div className="game">
-            <div className="game-board">
-                <Board onClick={handleClick} />
-            </div>
-            <div className="game-info">
-                <div>{store.room?.roomName}</div>
-                <div>{store.room?.player1} vs {store.room?.player2}</div>
-                {/* <div>{status}</div> */}
-            </div>
+                {!store.isGameOver && <div>{store.isYourTurn ? 'Your turn' : 'Opponent turn'}</div>}
+                <div className="game-board">
+                    <Board onClick={handleClick} />
+                </div>
+                <div className="game-info">
+                    <div>{store.room?.roomName}</div>
+                    <div>{store.room?.player1} vs {store.room?.player2}</div>
+                    {/* <div>{status}</div> */}
+                </div>
             </div>
         )}
         </div>

@@ -9,7 +9,7 @@ class Store {
     room: Room | null = null;
     isYourTurn = false;
     board: SquareValue[][] = this.resetBoard();
-    gameOver = false;
+    isGameOver = false;
     isWinner: boolean | null = null;
 
     constructor() {
@@ -46,7 +46,7 @@ class Store {
     }
 
     setGameOver(winner: boolean, draw: boolean) {
-        this.gameOver = true;
+        this.isGameOver = true;
         this.gameInProgress = false;
         this.isWinner = draw ? null : winner;
     }
@@ -141,6 +141,8 @@ class Store {
         this.room = null;
         this.isYourTurn = false;
         this.board = this.resetBoard();
+        this.isGameOver = false;
+        this.isWinner = null;
         api.webSocket.disconnect();
     }
 }
