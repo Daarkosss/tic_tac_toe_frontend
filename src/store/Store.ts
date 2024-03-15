@@ -16,25 +16,42 @@ class Store {
         makeAutoObservable(this);
     }
 
-    saveRoomDataToLocalStorage() {
+    // saveRoomDataToLocalStorage() {
+    //     const dataToStore = {
+    //         username: this.username,
+    //         room: this.room
+    //     }
+    //     localStorage.setItem('roomData', JSON.stringify(dataToStore));
+    // }
+
+    // getRoomDataFromLocalStorage() {
+    //     const roomData = localStorage.getItem('roomData');
+    //     if (roomData) {
+    //         return JSON.parse(roomData);
+    //     } else {
+    //         return null
+    //     }
+    // }
+
+    saveRoomDataToSessionStorage() {
         const dataToStore = {
             username: this.username,
             room: this.room
         }
-        localStorage.setItem('roomData', JSON.stringify(dataToStore));
+        sessionStorage.setItem('roomData', JSON.stringify(dataToStore));
     }
-
-    getRoomDataFromLocalStorage() {
-        const roomData = localStorage.getItem('roomData');
+    
+    getRoomDataFromSessionStorage() {
+        const roomData = sessionStorage.getItem('roomData');
         if (roomData) {
             return JSON.parse(roomData);
         } else {
-            return null
+            return null;
         }
     }
 
     async chooseRoom() {
-        const userRoom = this.getRoomDataFromLocalStorage();
+        const userRoom = this.getRoomDataFromSessionStorage();
         if (userRoom && !this.username) {
             this.username = userRoom.username;
             try {
@@ -146,7 +163,7 @@ class Store {
             const response = await api.chooseRoomForPlayer(this.username);
             runInAction(() => {
                 this.room = response;
-                this.saveRoomDataToLocalStorage();
+                this.saveRoomDataToSessionStorage();
             });
             return true;
         } catch (error) {
