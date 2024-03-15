@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { api } from "../api";
-import { BoardOfNumbers, Room, SquareValue } from "../types";
+import { BoardOfNumbers, Room, SquareValue, UserRoom } from "../types";
 
 
 class Store {
@@ -11,6 +11,7 @@ class Store {
     board: SquareValue[][] = this.resetBoard();
     isGameOver = false;
     isWinner: boolean | null = null;
+    didOpponentQuit = false;
 
     constructor() {
         makeAutoObservable(this);
@@ -50,8 +51,7 @@ class Store {
         }
     }
 
-    async chooseRoom() {
-        const userRoom = this.getRoomDataFromSessionStorage();
+    async restoreRoom(userRoom: UserRoom) {
         if (userRoom && !this.username) {
             this.username = userRoom.username;
             try {
@@ -68,12 +68,10 @@ class Store {
                     this.updatePlayerTurnFromRoom();
                     console.log('is your turn?', this.isYourTurn);
                 });
-                return;
             } catch (error) {
                 console.error("Nie udało się przywrócić pokoju:", error);
             }
         }
-        store.chooseRoomForGame();
     }
 
     updateRoom(room: Room) {
@@ -184,13 +182,17 @@ class Store {
 
     resetStore() {
         this.username = '';
+        store.resetRoom();
+        api.webSocket.disconnect();
+    }
+
+    resetRoom() {
         this.gameInProgress = false;
         this.room = null;
         this.isYourTurn = false;
         this.board = this.resetBoard();
         this.isGameOver = false;
         this.isWinner = null;
-        api.webSocket.disconnect();
     }
 }
 

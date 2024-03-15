@@ -1,6 +1,7 @@
 import SockJS from 'sockjs-client';
 import Stomp, { Client } from 'webstomp-client';
 import { store } from './store/Store';
+import { toast } from 'react-toastify';
 
 export class WebSocketService {
     private stompClient: Client | null = null;
@@ -51,6 +52,10 @@ export class WebSocketService {
             case "GameOverMessage":
                 console.log("Otrzymano GameOverMessage", data.winner, data.draw);
                 store.setGameOver(data.winner, data.draw);
+                break;
+            case "OpponentLeftMessage":
+                store.resetRoom();
+                toast.info("Przeciwnik opuscil pokoj, oczekuj na nowego przeciwnika")
                 break;
             default:
                 console.error("Nieznany typ wiadomości:", messageType);
