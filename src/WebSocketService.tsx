@@ -55,7 +55,9 @@ export class WebSocketService {
                 break;
             case "OpponentLeftMessage":
                 store.resetRoom();
-                toast.info("Przeciwnik opuscil pokoj, oczekuj na nowego przeciwnika")
+                toast.info(
+                    "Przeciwnik opuscil pokoj, oczekuj na nowego przeciwnika",
+                    { theme: "colored" })
                 break;
             default:
                 console.error("Nieznany typ wiadomości:", messageType);

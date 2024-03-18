@@ -9,7 +9,7 @@ import Home from './pages/Home';
 function App() {
     return (
         <Router>
-            <ToastContainer />
+            <ToastContainer position="top-center"/>
             <Routes>
             <Route path="/" element={<Home/>} />
             <Route path="/game" element={<Game/>} />
