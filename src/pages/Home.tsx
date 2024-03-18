@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.scss';
 import { store } from '../store/Store';
@@ -6,6 +6,11 @@ import { store } from '../store/Store';
 const Home: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        store.resetStore();
+        console.log('XD');
+    }, []);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();

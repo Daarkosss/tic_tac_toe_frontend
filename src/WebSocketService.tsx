@@ -42,11 +42,11 @@ export class WebSocketService {
         switch(messageType) {
             case "Board":
                 console.log("Otrzymano Board", data.fields);
-                store.restoreBoard(data.fields);
+                store.updateAfterOpponentMove(data.fields);
                 break;
             case "Room":
                 console.log("Otrzymano Room", data.fields, data.roomName, data.player1, data.player2);
-                store.restoreBoard(data.fields);
+                store.updateAfterOpponentMove(data.fields);
                 store.updateRoom({roomName: data.roomName, player1: data.player1, player2: data.player2, freeSlots: data.freeSlots});
                 break;
             case "GameOverMessage":

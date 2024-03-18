@@ -1,8 +1,31 @@
-import { GetRoomResponse, Room } from './types';
 import { WebSocketService } from './WebSocketService';
 
 const PATH_PREFIX = 'http://localhost:8080/';
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+
+export type Player = {
+    name: string,
+    starting: boolean
+}
+
+export type BoardOfNumbers = number[][]
+
+export type GetRoomResponse = {
+    dtype: string,
+    roomName: string,
+    freeSlots: number,
+    fields: BoardOfNumbers,
+    player1: Player,
+    player2: Player
+}
+
+export type Room = {
+    roomName: string,
+    freeSlots: number,
+    player1: Player,
+    player2: Player
+}
 
 class API {
 

@@ -1,7 +1,12 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { api } from "../api";
-import { BoardOfNumbers, Room, SquareValue, UserRoom } from "../types";
+import { api, Room, BoardOfNumbers } from "../api";
+import { SquareValue } from "../components/Square";
 
+
+export type UserRoom = {
+    username: string,
+    room: Room
+}
 
 class Store {
     username = '';
@@ -11,28 +16,10 @@ class Store {
     board: SquareValue[][] = this.resetBoard();
     isGameOver = false;
     isWinner: boolean | null = null;
-    didOpponentQuit = false;
 
     constructor() {
         makeAutoObservable(this);
     }
-
-    // saveRoomDataToLocalStorage() {
-    //     const dataToStore = {
-    //         username: this.username,
-    //         room: this.room
-    //     }
-    //     localStorage.setItem('roomData', JSON.stringify(dataToStore));
-    // }
-
-    // getRoomDataFromLocalStorage() {
-    //     const roomData = localStorage.getItem('roomData');
-    //     if (roomData) {
-    //         return JSON.parse(roomData);
-    //     } else {
-    //         return null
-    //     }
-    // }
 
     saveRoomDataToSessionStorage() {
         const dataToStore = {
@@ -57,14 +44,15 @@ class Store {
             try {
                 const response = await api.getRoom(userRoom.room.roomName);
                 this.startWebSocketConnection();
-                this.restoreBoard(response.fields);
+                this.updateAfterOpponentMove(response.fields);
                 runInAction(() => {
-                    this.room = {
+                    const room: Room = {
                         roomName: response.roomName,
                         freeSlots: response.freeSlots,
                         player1: response.player1,
                         player2: response.player2
                     };
+                    this.updateRoom(room);
                     this.updatePlayerTurnFromRoom();
                     console.log('is your turn?', this.isYourTurn);
                 });
@@ -77,6 +65,7 @@ class Store {
     updateRoom(room: Room) {
         this.room = room;
         this.updatePlayerTurnFromRoom();
+        this.startGame();
     }
 
     updatePlayerTurnFromRoom() {
@@ -120,10 +109,10 @@ class Store {
         return this.yourSymbol === 'X' ? 'O' : 'X';
     }
 
-    restoreBoard(board: BoardOfNumbers) {
+    updateAfterOpponentMove(board: BoardOfNumbers) {
         console.log(board);
         this.updateEntireBoard(board);
-        this.startGame();
+        this.isYourTurn = true;
     }
 
     startWebSocketConnection() {
@@ -136,10 +125,6 @@ class Store {
         api.webSocket.sendMove(i, j);
     }
 
-    updateBoardSquare(i: number, j: number, value: SquareValue) {
-        this.board[i][j] = value;
-    }
-
     updateEntireBoard(board: BoardOfNumbers) {
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 3; j++) {
@@ -150,13 +135,12 @@ class Store {
 
     startGame() {
         this.gameInProgress = true;
-        this.isYourTurn = true;
     }
 
     async chooseRoomForGame() {
         try {
             await this.startWebSocketConnection();
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 500));
     
             const response = await api.chooseRoomForPlayer(this.username);
             runInAction(() => {
@@ -165,7 +149,7 @@ class Store {
             });
             return true;
         } catch (error) {
-            console.error('Błąd:', error);
+            console.error('Error:', error);
             return error;
         }
     }
