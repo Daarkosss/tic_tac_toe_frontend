@@ -41,12 +41,12 @@ export class WebSocketService {
         
         switch(messageType) {
             case "Board":
-                console.log("Get Board", data.fields);
-                store.updateAfterOpponentMove(data.fields);
+                console.log("Get Board", data.board);
+                store.updateAfterOpponentMove(data.board);
                 break;
             case "Room":
-                console.log("Get Room", data.fields, data.roomName, data.player1, data.player2);
-                store.updateAfterOpponentMove(data.fields);
+                console.log("Get Room", data.board, data.roomName, data.player1, data.player2);
+                store.updateAfterOpponentMove(data.board);
                 store.updateRoom({
                     roomName: data.roomName,
                     player1: data.player1,
@@ -58,7 +58,7 @@ export class WebSocketService {
                 console.log("Get GameOverMessage", data.winner, data.draw);
                 store.setGameOver(data.winner, data.draw);
                 break;
-            case "OpponentLeftMessage":
+            case "OpponentLeftGameMessage":
                 store.resetRoom();
                 toast.info(
                     "Your opponent has left the room, wait for the next one",
@@ -78,8 +78,8 @@ export class WebSocketService {
 
         const move = { 
             roomName: store.room?.roomName,
-            x: i,
-            y: j,
+            i: i,
+            j: j,
             playerName: store.username
         };
         this.stompClient.send(`/app/move`, JSON.stringify(move));

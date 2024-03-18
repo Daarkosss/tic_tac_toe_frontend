@@ -53,7 +53,7 @@ class Store {
                     player2: response.player2
                 };
                 this.updateRoom(room);
-                this.setGameStart(response.fields);
+                this.setGameStart(response.board);
                 console.log('Is it your turn?', this.isYourTurn);
             });
         } catch (error) {

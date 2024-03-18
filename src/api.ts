@@ -20,7 +20,7 @@ export type Room = {
 
 export interface GetRoomResponse extends Room {
     dtype: string,
-    fields: BoardOfNumbers,
+    board: BoardOfNumbers,
 }
 
 class API {
@@ -54,7 +54,7 @@ class API {
     async chooseRoomForPlayer(username: string): Promise<Room> {
         const response = await this.fetch<Room>(
             'POST', 
-            `rooms/chooseRoomForPlayer?playerName=${username}`, 
+            `rooms/findRoomForPlayer?playerName=${username}`, 
         );
         console.log(response);
         return response;
@@ -63,7 +63,7 @@ class API {
     async deletePlayerFromRoom(roomName: string, username: string) {
         const response = await this.fetch<Room>(
             'DELETE', 
-            `rooms/deletePlayerFromRoom?roomName=${roomName}&playerName=${username}`, 
+            `rooms/removePlayerFromRoom?roomName=${roomName}&playerName=${username}`, 
         );
         console.log(response);
         return response;
