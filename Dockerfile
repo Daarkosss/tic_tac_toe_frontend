@@ -1,29 +1,29 @@
-# Etap budowania
+# Set build
 FROM node:18-alpine as build
 
-# Ustaw katalog roboczy w kontenerze
+# Set working directory
 WORKDIR /app
 
-# Skopiuj pliki projektu
+# Copy package.json and pnpm-lock.yaml files
 COPY package.json pnpm-lock.yaml ./
 
-# Zainstaluj zależności
+# Install dependencies
 RUN npm install -g pnpm && pnpm install
 
 COPY . .
 
-# Zbuduj aplikację na produkcję
+# Build the app
 RUN pnpm run build
 
-# Etap produkcyjny
+# Production stage
 FROM nginx:stable-alpine
 
-# Skopiuj zbudowaną aplikację z etapu budowania do katalogu serwera nginx
+# Copy built app from build stage to nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 COPY default.conf /etc/nginx/conf.d/default.conf
 
-# Ustaw port, na którym nginx będzie nasłuchiwał
+# Set port 
 EXPOSE 80
 
-# Uruchom nginx w tle
+# Run nginx
 CMD ["nginx", "-g", "daemon off;"]

@@ -47,7 +47,7 @@ const Game = observer(() => {
             {store.isGameOver && <div className="game-over">{store.isWinner ? 'You won!' : store.isWinner === false ? 'You lost!' : 'Draw!'}</div>}
             {!store.gameInProgress && !store.isGameOver ? (
                 <div className="waiting-screen">
-                Oczekiwanie na dołączenie drugiego gracza...
+                    Waiting for opponent...
                 </div>
             ) : (
                 <div className="game">
