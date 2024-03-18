@@ -11,20 +11,16 @@ export type Player = {
 
 export type BoardOfNumbers = number[][]
 
-export type GetRoomResponse = {
-    dtype: string,
-    roomName: string,
-    freeSlots: number,
-    fields: BoardOfNumbers,
-    player1: Player,
-    player2: Player
-}
-
 export type Room = {
     roomName: string,
     freeSlots: number,
     player1: Player,
     player2: Player
+}
+
+export interface GetRoomResponse extends Room {
+    dtype: string,
+    fields: BoardOfNumbers,
 }
 
 class API {

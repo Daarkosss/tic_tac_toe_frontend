@@ -11,12 +11,12 @@ const Game = observer(() => {
 
     useEffect(() => {
         async function chooseRoomForGame() {
-            const userRoom = store.getRoomDataFromSessionStorage();
+            const userRoom = store.getRoomDataFromStorage();
             if (userRoom && !store.username) {
                 await store.restoreRoom(userRoom);
             }
             if (store.username && !store.room) {
-                store.chooseRoomForGame();
+                store.chooseRoom();
             } else if (!store.username) {
                 navigate("/");
             }
@@ -34,7 +34,7 @@ const Game = observer(() => {
     const deletePlayerFromRoom = () => {
         navigate("/");
         if (store.room) {
-            store.deletePlayerFromRoom(store.room.roomName, store.username);
+            store.leaveRoom(store.room.roomName, store.username);
         }
     };
 
