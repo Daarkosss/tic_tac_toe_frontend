@@ -13,7 +13,7 @@ export class WebSocketService {
 
             this.stompClient.connect({}, (frame) => {
                 console.log('Connected with webSocket:', frame);
-                this.subscribeToTopics();
+                this.subscribeToQueue();
                 resolve();
             }, (error) => {
                 console.error('Error while connecting with webSocket:', error);
@@ -22,10 +22,10 @@ export class WebSocketService {
         });
     }
 
-    private subscribeToTopics() {
+    private subscribeToQueue() {
         if (!this.stompClient) return;
 
-        this.stompClient.subscribe(`/topic/${store.username}`, (message) => {
+        this.stompClient.subscribe(`/queue/${store.username}`, (message) => {
             try {
                 const data = JSON.parse(message.body);
                 console.log("Get data:", data);
