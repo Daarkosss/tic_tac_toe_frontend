@@ -10,8 +10,20 @@ const Game = observer(() => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        store.chooseRoom();
-    }, []);
+        async function chooseRoomForGame() {
+            const userRoom = store.getRoomDataFromSessionStorage();
+            if (userRoom && !store.username) {
+                await store.restoreRoom(userRoom);
+            }
+            if (store.username && !store.room) {
+                store.chooseRoomForGame();
+            } else if (!store.username) {
+                navigate("/");
+            }
+        }
+
+        chooseRoomForGame();
+    }, [navigate]);
 
     const handleClick = (i: number, j: number) => {
         if (store.isGameOver || !store.isYourTurn || store.board[i][j]) {
@@ -22,9 +34,9 @@ const Game = observer(() => {
     };
 
     const deletePlayerFromRoom = () => {
+        navigate("/");
         if (store.room) {
             store.deletePlayerFromRoom(store.room.roomName, store.username);
-            navigate("/");
         }
     };
 
@@ -47,8 +59,7 @@ const Game = observer(() => {
                     </div>
                     <div className="game-info">
                         <div>{store.room?.roomName}</div>
-                        <div>{store.room?.player1.name} vs {store.room?.player2.name}</div>
-                        {/* <div>{status}</div> */}
+                        <div>{store.room?.player1?.name} vs {store.room?.player2?.name}</div>
                     </div>
                 </div>
             )}
