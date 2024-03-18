@@ -12,11 +12,11 @@ export class WebSocketService {
             this.stompClient = Stomp.over(socket);
 
             this.stompClient.connect({}, (frame) => {
-                console.log('Połączono z WebSocket:', frame);
+                console.log('Connected with webSocket:', frame);
                 this.subscribeToTopics();
                 resolve();
             }, (error) => {
-                console.error('Błąd połączenia z WebSocket:', error);
+                console.error('Error while connecting with webSocket:', error);
                 reject(error);
             });
         });
@@ -28,10 +28,10 @@ export class WebSocketService {
         this.stompClient.subscribe(`/topic/${store.username}`, (message) => {
             try {
                 const data = JSON.parse(message.body);
-                console.log("Otrzymano wiadomość:", data);
+                console.log("Get data:", data);
                 this.handleMessage(data);
             } catch (error) {
-                console.error("Błąd przetwarzania wiadomości:", error);
+                console.error("Error while parsing message:", error);
             }
         });
     }
@@ -41,26 +41,26 @@ export class WebSocketService {
         
         switch(messageType) {
             case "Board":
-                console.log("Otrzymano Board", data.fields);
+                console.log("Get Board", data.fields);
                 store.updateAfterOpponentMove(data.fields);
                 break;
             case "Room":
-                console.log("Otrzymano Room", data.fields, data.roomName, data.player1, data.player2);
+                console.log("Get Room", data.fields, data.roomName, data.player1, data.player2);
                 store.updateAfterOpponentMove(data.fields);
                 store.updateRoom({roomName: data.roomName, player1: data.player1, player2: data.player2, freeSlots: data.freeSlots});
                 break;
             case "GameOverMessage":
-                console.log("Otrzymano GameOverMessage", data.winner, data.draw);
+                console.log("Get GameOverMessage", data.winner, data.draw);
                 store.setGameOver(data.winner, data.draw);
                 break;
             case "OpponentLeftMessage":
                 store.resetRoom();
                 toast.info(
-                    "Przeciwnik opuscil pokoj, oczekuj na nowego przeciwnika",
+                    "Your opponent has left the room, wait for the next one",
                     { theme: "colored" })
                 break;
             default:
-                console.error("Nieznany typ wiadomości:", messageType);
+                console.error("Uknown message type:", messageType);
         }
     }
 

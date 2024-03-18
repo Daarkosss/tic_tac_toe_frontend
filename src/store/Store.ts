@@ -109,6 +109,10 @@ class Store {
         return this.yourSymbol === 'X' ? 'O' : 'X';
     }
 
+    get canMove() {
+        return !store.isGameOver && store.isYourTurn;
+    }
+
     updateAfterOpponentMove(board: BoardOfNumbers) {
         console.log(board);
         this.updateEntireBoard(board);
