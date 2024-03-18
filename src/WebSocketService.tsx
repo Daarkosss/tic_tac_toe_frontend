@@ -47,7 +47,12 @@ export class WebSocketService {
             case "Room":
                 console.log("Get Room", data.fields, data.roomName, data.player1, data.player2);
                 store.updateAfterOpponentMove(data.fields);
-                store.updateRoom({roomName: data.roomName, player1: data.player1, player2: data.player2, freeSlots: data.freeSlots});
+                store.updateRoom({
+                    roomName: data.roomName,
+                    player1: data.player1,
+                    player2: data.player2,
+                    freeSlots: data.freeSlots
+                });
                 break;
             case "GameOverMessage":
                 console.log("Get GameOverMessage", data.winner, data.draw);
@@ -57,7 +62,8 @@ export class WebSocketService {
                 store.resetRoom();
                 toast.info(
                     "Your opponent has left the room, wait for the next one",
-                    { theme: "colored" })
+                    { theme: "colored" }
+                );
                 break;
             default:
                 console.error("Uknown message type:", messageType);
