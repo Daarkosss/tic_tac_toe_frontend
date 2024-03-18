@@ -1,4 +1,5 @@
 import { makeAutoObservable, runInAction } from "mobx";
+import { toast } from 'react-toastify';
 import { api, Room, BoardOfNumbers } from "../api";
 import { SquareValue } from "../components/Square";
 
@@ -155,7 +156,12 @@ class Store {
                 this.saveRoomDataFromStorage();
             });
         } catch (error) {
-            console.error('Error while choosing room:', error);
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            toast.error(
+                errorMessage,
+                { theme: "colored" }
+            );
+            store.resetStore();
         }
     }
 

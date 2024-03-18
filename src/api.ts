@@ -51,18 +51,6 @@ class API {
     }
     webSocket = new WebSocketService();
 
-    async authorizedFetch<T>(
-        method: Method,
-        path: string,
-        body?: unknown
-    ): Promise<T> {
-        return this.fetch<T>(
-            method, 
-            path,
-            body,
-        );
-    }
-
     async chooseRoomForPlayer(username: string): Promise<Room> {
         const response = await this.fetch<Room>(
             'POST', 

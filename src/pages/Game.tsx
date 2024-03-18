@@ -16,8 +16,9 @@ const Game = observer(() => {
                 await store.restoreRoom(userRoom);
             }
             if (store.username && !store.room) {
-                store.chooseRoom();
-            } else if (!store.username) {
+                await store.chooseRoom();
+            }
+            if (!store.username) {
                 navigate("/");
             }
         }

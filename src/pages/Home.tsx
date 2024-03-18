@@ -9,7 +9,6 @@ const Home: React.FC = () => {
 
     useEffect(() => {
         store.resetStore();
-        console.log('XD');
     }, []);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
