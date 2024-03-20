@@ -19,7 +19,7 @@ export type Room = {
 }
 
 export interface GetRoomResponse extends Room {
-    dtype: string,
+    type: string,
     board: BoardOfNumbers,
 }
 

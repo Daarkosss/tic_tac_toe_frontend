@@ -1,6 +1,6 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import { toast } from 'react-toastify';
-import { api, Room, BoardOfNumbers } from "../api";
+import { api, Room, BoardOfNumbers } from "../api/api";
 import { SquareValue } from "../components/Square";
 
 

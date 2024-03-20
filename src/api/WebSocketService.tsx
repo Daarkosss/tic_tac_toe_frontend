@@ -1,6 +1,6 @@
 import SockJS from 'sockjs-client';
 import Stomp, { Client } from 'webstomp-client';
-import { store } from './store/Store';
+import { store } from '../store/Store';
 import { toast } from 'react-toastify';
 
 export class WebSocketService {
@@ -37,7 +37,7 @@ export class WebSocketService {
     }
 
     private handleMessage(data: any) {
-        const messageType = data.dtype;
+        const messageType = data.type;
         
         switch(messageType) {
             case "Board":
