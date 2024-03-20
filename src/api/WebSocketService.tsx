@@ -59,14 +59,14 @@ export class WebSocketService {
                 store.setGameOver(data.winner, data.draw);
                 break;
             case "OpponentLeftGameMessage":
-                store.resetRoom();
+                store.stopGame();
                 toast.info(
                     "Your opponent has left the room, wait for the next one",
                     { theme: "colored" }
                 );
                 break;
             default:
-                console.error("Uknown message type:", messageType);
+                console.error("Unknown message type:", messageType);
         }
     }
 

@@ -165,9 +165,10 @@ class Store {
         }
     }
 
-    async leaveRoom(roomName: string, username: string) {
+    async leaveRoom() {
         try {
-            await api.deletePlayerFromRoom(roomName, username);
+            if (store.room)
+                await api.deletePlayerFromRoom(store.room?.roomName, store.username);
             this.resetStore()
         } catch (error) {
             console.error('Error while leaving room:', error);
@@ -187,6 +188,13 @@ class Store {
         this.board = this.resetBoard();
         this.isGameOver = false;
         this.isWinner = null;
+    }
+
+    stopGame() {
+        this.gameInProgress = false;
+        this.isGameOver = false;
+        this.isWinner = null;
+        this.board = this.resetBoard();
     }
 }
 

@@ -34,9 +34,8 @@ const Game = observer(() => {
 
     const deletePlayerFromRoom = () => {
         navigate("/");
-        if (store.room) {
-            store.leaveRoom(store.room.roomName, store.username);
-        }
+        store.leaveRoom();
+        
     };
 
     return (
