@@ -10,6 +10,7 @@ COPY package.json pnpm-lock.yaml ./
 # Install dependencies
 RUN npm install -g pnpm && pnpm install
 
+# Copy whole source code of project to working directory in container
 COPY . .
 
 # Build the app
