@@ -2,13 +2,14 @@ import SockJS from 'sockjs-client';
 import Stomp, { Client } from 'webstomp-client';
 import { store } from '../store/Store';
 import { toast } from 'react-toastify';
+import { PATH_PREFIX } from './api';
 
 export class WebSocketService {
     private stompClient: Client | null = null;
 
     public startConnection(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const socket = new SockJS('http://localhost:8080/ws');
+            const socket = new SockJS(`${PATH_PREFIX}ws`);
             this.stompClient = Stomp.over(socket);
 
             this.stompClient.connect({}, (frame) => {

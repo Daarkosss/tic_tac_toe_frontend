@@ -1,6 +1,10 @@
 import { WebSocketService } from './WebSocketService';
 
-const PATH_PREFIX = 'http://localhost:8080/';
+const backendHost = process.env.REACT_APP_BACKEND_HOST || 'localhost';
+const backendPort = process.env.REACT_APP_BACKEND_PORT || '8080';
+export const PATH_PREFIX = `http://${backendHost}:${backendPort}/`;
+console.log(PATH_PREFIX);
+
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 
