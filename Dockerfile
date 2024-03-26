@@ -16,6 +16,7 @@ COPY . .
 # Build the app
 RUN pnpm run build
 
+
 # Production stage
 FROM nginx:stable-alpine
 
