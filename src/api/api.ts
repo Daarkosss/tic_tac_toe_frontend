@@ -1,9 +1,9 @@
 import { WebSocketService } from './WebSocketService';
 
-const backendHost = process.env.REACT_APP_BACKEND_HOST || 'localhost';
-const backendPort = process.env.REACT_APP_BACKEND_PORT || '8080';
+const backendHost = window.location.hostname || 'localhost';
+const backendPort = '8080';
 export const PATH_PREFIX = `http://${backendHost}:${backendPort}/`;
-console.log(PATH_PREFIX);
+console.log('host', PATH_PREFIX);
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
