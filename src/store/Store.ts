@@ -54,7 +54,6 @@ class Store {
                 };
                 this.updateRoom(room);
                 this.setGameStart(response.board);
-                console.log('Is it your turn?', this.isYourTurn);
             });
         } catch (error) {
             console.error("Failed to restore room:", error);
@@ -120,7 +119,6 @@ class Store {
     }
 
     updateAfterOpponentMove(board: BoardOfNumbers) {
-        console.log(board);
         this.updateBoard(board);
         this.isYourTurn = true;
     }

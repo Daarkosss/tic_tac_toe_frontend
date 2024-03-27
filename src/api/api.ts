@@ -3,7 +3,6 @@ import { WebSocketService } from './WebSocketService';
 const backendHost = window.location.hostname || 'localhost';
 const backendPort = '8080';
 export const PATH_PREFIX = `http://${backendHost}:${backendPort}/`;
-console.log('host', PATH_PREFIX);
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -60,7 +59,7 @@ class API {
             'POST', 
             `rooms/findRoomForPlayer?playerName=${username}`, 
         );
-        console.log(response);
+        // console.log(response);
         return response;
     }
 
@@ -69,7 +68,7 @@ class API {
             'DELETE', 
             `rooms/removePlayerFromRoom?roomName=${roomName}&playerName=${username}`, 
         );
-        console.log(response);
+        // console.log(response);
         return response;
     }
 
