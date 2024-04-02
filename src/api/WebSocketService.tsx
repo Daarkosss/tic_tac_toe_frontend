@@ -11,13 +11,14 @@ export class WebSocketService {
         return new Promise((resolve, reject) => {
             const socket = new SockJS(`${PATH_PREFIX}ws`);
             this.stompClient = Stomp.over(socket);
+            this.stompClient.debug = () => {};
 
-            this.stompClient.connect({}, (frame) => {
-                console.log('Connected with webSocket:', frame);
+            this.stompClient.connect({}, () => {
+                console.log('Connected with WebSocket:');
                 this.subscribeToQueue();
                 resolve();
             }, (error) => {
-                console.error('Error while connecting with webSocket:', error);
+                console.error('Error while connecting with webSocket:');
                 reject(error);
             });
         });
