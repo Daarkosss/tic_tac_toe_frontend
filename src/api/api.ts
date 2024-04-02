@@ -59,7 +59,6 @@ class API {
             'POST', 
             `rooms/findRoomForPlayer?playerName=${username}`, 
         );
-        // console.log(response);
         return response;
     }
 
@@ -68,7 +67,6 @@ class API {
             'DELETE', 
             `rooms/removePlayerFromRoom?roomName=${roomName}&playerName=${username}`, 
         );
-        // console.log(response);
         return response;
     }
 
@@ -77,7 +75,6 @@ class API {
             'GET', 
             `rooms?roomName=${roomName}`, 
         );
-        console.log('getRoom', response);
         return response;
     }
 }

@@ -29,7 +29,6 @@ export class WebSocketService {
         this.stompClient.subscribe(`/queue/${store.username}`, (message) => {
             try {
                 const data = JSON.parse(message.body);
-                // console.log("Get data:", data);
                 this.handleMessage(data);
             } catch (error) {
                 console.error("Error while parsing message:", error);
@@ -42,11 +41,9 @@ export class WebSocketService {
         
         switch(messageType) {
             case "Board":
-                // console.log("Get Board", data.board);
                 store.updateAfterOpponentMove(data.board);
                 break;
             case "Room":
-                // console.log("Get Room", data.board, data.roomName, data.player1, data.player2);
                 store.updateAfterOpponentMove(data.board);
                 store.updateRoom({
                     roomName: data.roomName,
@@ -56,7 +53,6 @@ export class WebSocketService {
                 });
                 break;
             case "GameOverMessage":
-                // console.log("Get GameOverMessage", data.winner, data.draw);
                 store.setGameOver(data.winner, data.draw);
                 break;
             case "OpponentLeftGameMessage":
@@ -66,14 +62,11 @@ export class WebSocketService {
                     { theme: "colored" }
                 );
                 break;
-            default:
-                console.error("Unknown message type:", messageType);
         }
     }
 
     public sendMove(i: number, j: number): void {
         if (!this.stompClient || !this.stompClient.connected) {
-            // console.log("Stomp client is not connected.");
             return;
         }
 
@@ -84,7 +77,6 @@ export class WebSocketService {
             playerName: store.username
         };
         this.stompClient.send(`/app/move`, JSON.stringify(move));
-        // console.log('Sent move:', move);
     }
 
     public disconnect(): void {
