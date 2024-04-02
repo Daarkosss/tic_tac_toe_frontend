@@ -56,7 +56,7 @@ class Store {
                 this.setGameStart(response.board);
             });
         } catch (error) {
-            console.error("Failed to restore room:", error);
+            // console.error("Failed to restore room:", error);
         }
     }
 
@@ -169,7 +169,7 @@ class Store {
                 await api.deletePlayerFromRoom(store.room?.roomName, store.username);
             this.resetStore()
         } catch (error) {
-            console.error('Error while leaving room:', error);
+            // console.error('Error while leaving room:', error);
         }
     }
 
