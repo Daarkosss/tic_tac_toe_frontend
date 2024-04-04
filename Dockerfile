@@ -16,7 +16,6 @@ COPY . .
 # Build the app
 RUN pnpm run build
 
-
 # Production stage
 FROM nginx:stable-alpine
 
@@ -27,5 +26,8 @@ COPY default.conf /etc/nginx/conf.d/default.conf
 # Set port 
 EXPOSE 80
 
-# Run nginx
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
+COPY env.sh /docker-entrypoint.d/env.sh
+RUN chmod +x /docker-entrypoint.d/env.sh
+
+# The CMD command to start Nginx stays the same
+CMD ["nginx", "-g", "daemon off;"]
