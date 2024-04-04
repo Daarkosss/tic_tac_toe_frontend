@@ -1,7 +1,7 @@
 import { WebSocketService } from './WebSocketService';
 
-const backendHost = window.location.hostname || 'localhost';
-const backendPort = '8080';
+const backendHost = import.meta.env.VITE_BACKEND_HOST || window.location.hostname;
+const backendPort = import.meta.env.VITE_BACKEND_PORT || '8080';
 export const PATH_PREFIX = `http://${backendHost}:${backendPort}/`;
 
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
