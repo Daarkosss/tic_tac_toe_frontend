@@ -11,13 +11,14 @@ const Game = observer(() => {
 
     useEffect(() => {
         async function chooseRoomForGame() {
-            const userRoom = store.getRoomDataFromSessionStorage();
+            const userRoom = store.getRoomDataFromStorage();
             if (userRoom && !store.username) {
                 await store.restoreRoom(userRoom);
             }
             if (store.username && !store.room) {
-                store.chooseRoomForGame();
-            } else if (!store.username) {
+                await store.chooseRoom();
+            }
+            if (!store.username) {
                 navigate("/");
             }
         }
@@ -26,30 +27,27 @@ const Game = observer(() => {
     }, [navigate]);
 
     const handleClick = (i: number, j: number) => {
-        if (store.isGameOver || !store.isYourTurn || store.board[i][j]) {
-            return;
+        if (store.canMove && !store.board[i][j]) {
+            store.sendMove(i, j);
         }
-
-        store.sendMove(i, j);
     };
 
     const deletePlayerFromRoom = () => {
         navigate("/");
-        if (store.room) {
-            store.deletePlayerFromRoom(store.room.roomName, store.username);
-        }
+        store.leaveRoom();
+        
     };
 
     return (
         <div className="game-container">
             <div className="game-header">
-                <button className="btn btn-warning" onClick={deletePlayerFromRoom}>Powrót do strony głównej</button>
-                <div className="username">Grasz jako: {store.username || 'Anonim'}</div>
+                <button className="btn btn-warning" onClick={deletePlayerFromRoom}>Go back to homepage</button>
+                <div className="username">You play as: {store.username || 'Anonim'}</div>
             </div>
             {store.isGameOver && <div className="game-over">{store.isWinner ? 'You won!' : store.isWinner === false ? 'You lost!' : 'Draw!'}</div>}
             {!store.gameInProgress && !store.isGameOver ? (
                 <div className="waiting-screen">
-                Oczekiwanie na dołączenie drugiego gracza...
+                    Waiting for opponent...
                 </div>
             ) : (
                 <div className="game">

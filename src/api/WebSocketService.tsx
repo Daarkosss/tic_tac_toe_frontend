@@ -1,81 +1,83 @@
 import SockJS from 'sockjs-client';
 import Stomp, { Client } from 'webstomp-client';
-import { store } from './store/Store';
+import { store } from '../store/Store';
 import { toast } from 'react-toastify';
+import { PATH_PREFIX } from './api';
 
 export class WebSocketService {
     private stompClient: Client | null = null;
 
     public startConnection(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const socket = new SockJS('http://localhost:8080/ws');
+            const socket = new SockJS(`${PATH_PREFIX}ws`);
             this.stompClient = Stomp.over(socket);
+            this.stompClient.debug = () => {};
 
-            this.stompClient.connect({}, (frame) => {
-                console.log('Połączono z WebSocket:', frame);
-                this.subscribeToTopics();
+            this.stompClient.connect({}, () => {
+                console.log('Connected with WebSocket:');
+                this.subscribeToQueue();
                 resolve();
             }, (error) => {
-                console.error('Błąd połączenia z WebSocket:', error);
+                console.error('Error while connecting with webSocket:');
                 reject(error);
             });
         });
     }
 
-    private subscribeToTopics() {
+    private subscribeToQueue() {
         if (!this.stompClient) return;
 
-        this.stompClient.subscribe(`/topic/${store.username}`, (message) => {
+        this.stompClient.subscribe(`/queue/${store.username}`, (message) => {
             try {
                 const data = JSON.parse(message.body);
-                console.log("Otrzymano wiadomość:", data);
                 this.handleMessage(data);
             } catch (error) {
-                console.error("Błąd przetwarzania wiadomości:", error);
+                console.error("Error while parsing message:", error);
             }
         });
     }
 
     private handleMessage(data: any) {
-        const messageType = data.dtype;
+        const messageType = data.type;
         
         switch(messageType) {
             case "Board":
-                console.log("Otrzymano Board", data.fields);
-                store.restoreBoard(data.fields);
+                store.updateAfterOpponentMove(data.board);
                 break;
             case "Room":
-                console.log("Otrzymano Room", data.fields, data.roomName, data.player1, data.player2);
-                store.restoreBoard(data.fields);
-                store.updateRoom({roomName: data.roomName, player1: data.player1, player2: data.player2, freeSlots: data.freeSlots});
+                store.updateAfterOpponentMove(data.board);
+                store.updateRoom({
+                    roomName: data.roomName,
+                    player1: data.player1,
+                    player2: data.player2,
+                    freeSlots: data.freeSlots
+                });
                 break;
             case "GameOverMessage":
-                console.log("Otrzymano GameOverMessage", data.winner, data.draw);
                 store.setGameOver(data.winner, data.draw);
                 break;
-            case "OpponentLeftMessage":
-                store.resetRoom();
-                toast.info("Przeciwnik opuscil pokoj, oczekuj na nowego przeciwnika")
+            case "OpponentLeftGameMessage":
+                store.stopGame();
+                toast.info(
+                    "Your opponent has left the room, wait for the next one",
+                    { theme: "colored" }
+                );
                 break;
-            default:
-                console.error("Nieznany typ wiadomości:", messageType);
         }
     }
 
     public sendMove(i: number, j: number): void {
         if (!this.stompClient || !this.stompClient.connected) {
-            console.log("Stomp client is not connected.");
             return;
         }
 
         const move = { 
             roomName: store.room?.roomName,
-            x: i,
-            y: j,
+            i: i,
+            j: j,
             playerName: store.username
         };
         this.stompClient.send(`/app/move`, JSON.stringify(move));
-        console.log('Sent move:', move);
     }
 
     public disconnect(): void {

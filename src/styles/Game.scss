@@ -5,11 +5,6 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-
-    .game-over {
-        font-size: 24px;
-        color: #ffca2c;
-    }
 }
 
 .game-board {
@@ -50,9 +45,9 @@
     justify-content: flex-start;
     align-items: stretch; /* Zmiana z 'center' na 'stretch' */
     height: 90vh;
+    font-size: 22px;
 
     .game-over {
-        font-size: 24px;
         color: #ffca2c;
     }
 }

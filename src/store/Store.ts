@@ -1,7 +1,13 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { api } from "../api";
-import { BoardOfNumbers, Room, SquareValue, UserRoom } from "../types";
+import { toast } from 'react-toastify';
+import { api, Room, BoardOfNumbers } from "../api/api";
+import { SquareValue } from "../components/Square";
 
+
+export type UserRoom = {
+    username: string,
+    room: Room
+}
 
 class Store {
     username = '';
@@ -11,30 +17,12 @@ class Store {
     board: SquareValue[][] = this.resetBoard();
     isGameOver = false;
     isWinner: boolean | null = null;
-    didOpponentQuit = false;
 
     constructor() {
         makeAutoObservable(this);
     }
 
-    // saveRoomDataToLocalStorage() {
-    //     const dataToStore = {
-    //         username: this.username,
-    //         room: this.room
-    //     }
-    //     localStorage.setItem('roomData', JSON.stringify(dataToStore));
-    // }
-
-    // getRoomDataFromLocalStorage() {
-    //     const roomData = localStorage.getItem('roomData');
-    //     if (roomData) {
-    //         return JSON.parse(roomData);
-    //     } else {
-    //         return null
-    //     }
-    // }
-
-    saveRoomDataToSessionStorage() {
+    saveRoomDataFromStorage() {
         const dataToStore = {
             username: this.username,
             room: this.room
@@ -42,7 +30,7 @@ class Store {
         sessionStorage.setItem('roomData', JSON.stringify(dataToStore));
     }
     
-    getRoomDataFromSessionStorage() {
+    getRoomDataFromStorage() {
         const roomData = sessionStorage.getItem('roomData');
         if (roomData) {
             return JSON.parse(roomData);
@@ -52,34 +40,40 @@ class Store {
     }
 
     async restoreRoom(userRoom: UserRoom) {
-        if (userRoom && !this.username) {
-            this.username = userRoom.username;
-            try {
-                const response = await api.getRoom(userRoom.room.roomName);
-                this.startWebSocketConnection();
-                this.restoreBoard(response.fields);
-                runInAction(() => {
-                    this.room = {
-                        roomName: response.roomName,
-                        freeSlots: response.freeSlots,
-                        player1: response.player1,
-                        player2: response.player2
-                    };
-                    this.updatePlayerTurnFromRoom();
-                    console.log('is your turn?', this.isYourTurn);
-                });
-            } catch (error) {
-                console.error("Nie udało się przywrócić pokoju:", error);
-            }
+        if (!userRoom.username || this.username) return;
+
+        this.username = userRoom.username;
+        try {
+            const response = await api.getRoom(userRoom.room.roomName);
+            runInAction(() => {
+                const room: Room = {
+                    roomName: response.roomName,
+                    freeSlots: response.freeSlots,
+                    player1: response.player1,
+                    player2: response.player2
+                };
+                this.updateRoom(room);
+                this.setGameStart(response.board);
+            });
+        } catch (error) {
+            // console.error("Failed to restore room:", error);
         }
+    }
+
+    setGameStart(board: BoardOfNumbers) {
+        this.startWebSocketConnection();
+        this.updateBoard(board);
+        this.updateTurnBasedOnRoom();
+        this.startGame();
     }
 
     updateRoom(room: Room) {
         this.room = room;
-        this.updatePlayerTurnFromRoom();
+        this.updateTurnBasedOnRoom();
+        this.startGame();
     }
 
-    updatePlayerTurnFromRoom() {
+    updateTurnBasedOnRoom() {
         if (this.username === this.room?.player1.name) {
             this.isYourTurn = this.room.player1.starting;
         } else if (this.username === this.room?.player2.name) {
@@ -120,10 +114,13 @@ class Store {
         return this.yourSymbol === 'X' ? 'O' : 'X';
     }
 
-    restoreBoard(board: BoardOfNumbers) {
-        console.log(board);
-        this.updateEntireBoard(board);
-        this.startGame();
+    get canMove() {
+        return !store.isGameOver && store.isYourTurn;
+    }
+
+    updateAfterOpponentMove(board: BoardOfNumbers) {
+        this.updateBoard(board);
+        this.isYourTurn = true;
     }
 
     startWebSocketConnection() {
@@ -136,47 +133,43 @@ class Store {
         api.webSocket.sendMove(i, j);
     }
 
-    updateBoardSquare(i: number, j: number, value: SquareValue) {
-        this.board[i][j] = value;
-    }
-
-    updateEntireBoard(board: BoardOfNumbers) {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-                this.board[i][j] = board[i][j] === 1 ? "X" : board[i][j] === 2 ? "O" : null;
-            }
-        }
+    updateBoard(board: BoardOfNumbers) {
+        this.board = board.map(row => 
+            row.map(cell => cell === 1 ? 'X' : cell === 2 ? 'O' : null)
+        );
     }
 
     startGame() {
         this.gameInProgress = true;
-        this.isYourTurn = true;
     }
 
-    async chooseRoomForGame() {
+    async chooseRoom() {
         try {
             await this.startWebSocketConnection();
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 500));
     
             const response = await api.chooseRoomForPlayer(this.username);
             runInAction(() => {
                 this.room = response;
-                this.saveRoomDataToSessionStorage();
+                this.saveRoomDataFromStorage();
             });
-            return true;
         } catch (error) {
-            console.error('Błąd:', error);
-            return error;
+            const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+            toast.error(
+                errorMessage,
+                { theme: "colored" }
+            );
+            store.resetStore();
         }
     }
 
-    deletePlayerFromRoom(roomName: string, username: string) {
+    async leaveRoom() {
         try {
-            api.deletePlayerFromRoom(roomName, username);
+            if (store.room)
+                await api.deletePlayerFromRoom(store.room?.roomName, store.username);
             this.resetStore()
-            return true;
         } catch (error) {
-            return error;
+            // console.error('Error while leaving room:', error);
         }
     }
 
@@ -193,6 +186,13 @@ class Store {
         this.board = this.resetBoard();
         this.isGameOver = false;
         this.isWinner = null;
+    }
+
+    stopGame() {
+        this.gameInProgress = false;
+        this.isGameOver = false;
+        this.isWinner = null;
+        this.board = this.resetBoard();
     }
 }
 

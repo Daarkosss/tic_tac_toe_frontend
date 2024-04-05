@@ -1,8 +1,11 @@
 import React from 'react';
-import { BoardProps } from '../types';
 import Square from './Square';
 import '../styles/Game.scss';
 
+
+export interface BoardProps {
+    onClick: (i: number, j: number) => void;
+}
 
 const Board: React.FC<BoardProps> = ({ onClick }) => {
     const renderSquare = (i: number, j: number) => (

@@ -1,8 +1,30 @@
-import { GetRoomResponse, Room } from './types';
 import { WebSocketService } from './WebSocketService';
 
-const PATH_PREFIX = 'http://localhost:8080/';
+const backendHost = import.meta.env.VITE_BACKEND_HOST || window.location.hostname;
+const backendPort = import.meta.env.VITE_BACKEND_PORT || '8080';
+export const PATH_PREFIX = `http://${backendHost}:${backendPort}/`;
+
 type Method = 'GET' | 'POST' | 'PUT' | 'DELETE';
+
+
+export type Player = {
+    name: string,
+    starting: boolean
+}
+
+export type BoardOfNumbers = number[][]
+
+export type Room = {
+    roomName: string,
+    freeSlots: number,
+    player1: Player,
+    player2: Player
+}
+
+export interface GetRoomResponse extends Room {
+    type: string,
+    board: BoardOfNumbers,
+}
 
 class API {
 
@@ -32,33 +54,19 @@ class API {
     }
     webSocket = new WebSocketService();
 
-    async authorizedFetch<T>(
-        method: Method,
-        path: string,
-        body?: unknown
-    ): Promise<T> {
-        return this.fetch<T>(
-            method, 
-            path,
-            body,
-        );
-    }
-
     async chooseRoomForPlayer(username: string): Promise<Room> {
         const response = await this.fetch<Room>(
             'POST', 
-            `rooms/chooseRoomForPlayer?playerName=${username}`, 
+            `rooms/findRoomForPlayer?playerName=${username}`, 
         );
-        console.log(response);
         return response;
     }
 
     async deletePlayerFromRoom(roomName: string, username: string) {
         const response = await this.fetch<Room>(
             'DELETE', 
-            `rooms/deletePlayerFromRoom?roomName=${roomName}&playerName=${username}`, 
+            `rooms/removePlayerFromRoom?roomName=${roomName}&playerName=${username}`, 
         );
-        console.log(response);
         return response;
     }
 
@@ -67,7 +75,6 @@ class API {
             'GET', 
             `rooms?roomName=${roomName}`, 
         );
-        console.log('getRoom', response);
         return response;
     }
 }

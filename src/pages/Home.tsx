@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Home.scss';
 import { store } from '../store/Store';
@@ -6,6 +6,10 @@ import { store } from '../store/Store';
 const Home: React.FC = () => {
     const [username, setUsername] = useState<string>('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        store.resetStore();
+    }, []);
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -15,9 +19,9 @@ const Home: React.FC = () => {
 
     return (
         <div className="Home">
-            <h1>Strona Główna</h1>
+            <h1>Tic-tac-toe homepage</h1>
             <form className="form" onSubmit={handleSubmit}>
-                <label htmlFor="username">Nazwa użytkownika:</label>
+                <label htmlFor="username">Username:</label>
                 <input
                     type="text"
                     id="username"
@@ -26,7 +30,7 @@ const Home: React.FC = () => {
                     required
                     minLength={5}
                 />
-                <button className="btn btn-light">Rozpocznij grę</button>
+                <button className="btn btn-light">Start game</button>
             </form>
         </div>
     )}
