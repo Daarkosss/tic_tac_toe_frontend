@@ -13,12 +13,12 @@ const Home: React.FC<HomeProps> = ({ user, onSignOut }) => {
 
     useEffect(() => {
         store.resetStore();
-    }, []);
-
-    const startGame = () => {
         if (user?.username) {
             store.username = user.username;
         }
+    }, [user?.username]);
+
+    const startGame = () => {
         navigate('/game');
     };
 
