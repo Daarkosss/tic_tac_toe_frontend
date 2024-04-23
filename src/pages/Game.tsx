@@ -34,7 +34,7 @@ const Game = observer(() => {
 
     const deletePlayerFromRoom = () => {
         navigate("/");
-        store.leaveRoom();
+        store.resetStore();
         
     };
 

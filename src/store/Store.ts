@@ -2,7 +2,7 @@ import { makeAutoObservable, runInAction } from "mobx";
 import { toast } from 'react-toastify';
 import { api, Room, BoardOfNumbers } from "../api/api";
 import { SquareValue } from "../components/Square";
-
+import awsSecrets from "../secrets";
 
 export type UserRoom = {
     username: string,
@@ -119,7 +119,7 @@ class Store {
     }
 
     get userToken() {
-        return localStorage.getItem('CognitoIdentityServiceProvider.7a48vhcvaq2k92j8ur0vlp85vs.karol321.accessToken');
+        return localStorage.getItem(`CognitoIdentityServiceProvider.${awsSecrets.aws_user_pools_web_client_id}.${store.username}.accessToken`);
     }
 
     updateAfterOpponentMove(board: BoardOfNumbers) {
@@ -164,16 +164,6 @@ class Store {
                 { theme: "colored" }
             );
             store.resetStore();
-        }
-    }
-
-    async leaveRoom() {
-        try {
-            if (store.room)
-                await api.deletePlayerFromRoom(store.room?.roomName, store.username);
-            this.resetStore()
-        } catch (error) {
-            // console.error('Error while leaving room:', error);
         }
     }
 
