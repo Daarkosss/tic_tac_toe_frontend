@@ -13,7 +13,11 @@ export class WebSocketService {
             this.stompClient = Stomp.over(socket);
             this.stompClient.debug = () => {};
 
-            this.stompClient.connect({}, () => {
+            const headers = {
+                Authorization: `Bearer ${store.userToken}`,
+            };
+
+            this.stompClient.connect(headers, () => {
                 console.log('Connected with WebSocket:');
                 this.subscribeToQueue();
                 resolve();
