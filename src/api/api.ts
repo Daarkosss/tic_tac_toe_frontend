@@ -1,4 +1,5 @@
 import { WebSocketService } from './WebSocketService';
+import { store } from '../store/Store';
 
 const backendHost = import.meta.env.VITE_BACKEND_HOST || window.location.hostname;
 const backendPort = import.meta.env.VITE_BACKEND_PORT || '8080';
@@ -52,10 +53,25 @@ class API {
             return data;
         }
     }
+
+    async authorizedFetch<T>(
+        method: Method,
+        path: string,
+        body?: unknown
+      ): Promise<T> {
+        console.log(store.userToken);
+        return this.fetch<T>(
+          method, 
+          path,
+          body,
+          {'Authorization': `Bearer ${store.userToken}`},
+        );
+      }
+
     webSocket = new WebSocketService();
 
     async chooseRoomForPlayer(username: string): Promise<Room> {
-        const response = await this.fetch<Room>(
+        const response = await this.authorizedFetch<Room>(
             'POST', 
             `rooms/findRoomForPlayer?playerName=${username}`, 
         );
@@ -63,7 +79,7 @@ class API {
     }
 
     async deletePlayerFromRoom(roomName: string, username: string) {
-        const response = await this.fetch<Room>(
+        const response = await this.authorizedFetch<Room>(
             'DELETE', 
             `rooms/removePlayerFromRoom?roomName=${roomName}&playerName=${username}`, 
         );
@@ -71,7 +87,7 @@ class API {
     }
 
     async getRoom(roomName: string): Promise<GetRoomResponse> {
-        const response = await this.fetch<GetRoomResponse>(
+        const response = await this.authorizedFetch<GetRoomResponse>(
             'GET', 
             `rooms?roomName=${roomName}`, 
         );

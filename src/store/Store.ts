@@ -118,6 +118,10 @@ class Store {
         return !store.isGameOver && store.isYourTurn;
     }
 
+    get userToken() {
+        return localStorage.getItem('CognitoIdentityServiceProvider.7a48vhcvaq2k92j8ur0vlp85vs.karol321.accessToken');
+    }
+
     updateAfterOpponentMove(board: BoardOfNumbers) {
         this.updateBoard(board);
         this.isYourTurn = true;
