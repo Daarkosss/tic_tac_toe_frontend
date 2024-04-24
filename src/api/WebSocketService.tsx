@@ -9,7 +9,7 @@ export class WebSocketService {
 
     public startConnection(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const socket = new SockJS(`${PATH_PREFIX}ws`);
+            const socket = new SockJS(`${PATH_PREFIX}ws?token=${store.userToken}`);
             this.stompClient = Stomp.over(socket);
             this.stompClient.debug = () => {};
 
